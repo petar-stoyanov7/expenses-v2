@@ -1,2 +1,2 @@
-# expenses-v2
-Rework of the original car expenses app
+# Intro
+This repository will contain the rework of the expenses app.
