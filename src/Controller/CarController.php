@@ -13,7 +13,6 @@ class CarController extends AbstractController
      */
     public function homepage() : Response
     {
-        dd($_SERVER);
         return new Response("home");
     }
 }

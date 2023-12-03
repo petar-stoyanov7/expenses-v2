@@ -39,6 +39,20 @@ class FuelTypeRepository extends ServiceEntityRepository
         }
     }
 
+    /**
+     * @return FuelType[] Returns an array of FuelType objects
+     */
+    public function findByFuelName(string $value): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.name = :val')
+            ->setParameter('val', $value)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return FuelType[] Returns an array of FuelType objects
 //     */
