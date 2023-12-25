@@ -4,8 +4,7 @@ namespace App\Controller;
 
 use App\Entity\FuelType;
 use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Mapping\Entity;
+use Doctrine\ORM\Query;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -59,9 +58,10 @@ class FuelController extends AbstractController
     public function getAll(EntityManagerInterface $entityManager): JsonResponse
     {
         $repository = $entityManager->getRepository(FuelType::class);
-        $fuelTypes = $repository->findAll();
-        //TODO: find ways to transform to normal array
-
+        $fuelTypes = $repository
+            ->createQueryBuilder('c')
+            ->getQuery()
+            ->getResult(Query::HYDRATE_ARRAY);
 
         if (!empty($fuelTypes)) {
             return $this->json($fuelTypes);
@@ -73,10 +73,11 @@ class FuelController extends AbstractController
     /**
      * @Route("/fuel/get/{id}", requirements={"id"="\d+"})
      */
-    public function getById(FuelType $fuelType): JsonResponse
+    public function getById(int $id, EntityManagerInterface $entityManager): JsonResponse
     {
+        $repo = $entityManager->getRepository(FuelType::class);
         //TODO: find ways to handle missing ID
-        return $this->json($fuelType);
+        return $this->json([]);
     }
 
     /**
