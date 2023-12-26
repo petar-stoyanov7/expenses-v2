@@ -2,9 +2,8 @@
 
 namespace App\Controller;
 
-use App\Entity\FuelType;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Query;
+use App\Repository\FuelTypeRepository;
+use App\Service\FuelTypeHelper;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,80 +11,81 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class FuelController extends AbstractController
 {
-    /**
-     * @Route("/fuel/new")
-     */
-    public function new(Request $request, EntityManagerInterface $entityManager): JsonResponse
+    private FuelTypeRepository $fuelTypeRepository;
+
+    private FuelTypeHelper $fuelTypeHelper;
+
+    public function __construct(
+        FuelTypeRepository $repository,
+        FuelTypeHelper     $helper
+    )
     {
-        $name = $request->get('name');
-        $displayName = $request->get('displayName');
+        $this->fuelTypeRepository = $repository;
+        $this->fuelTypeHelper = $helper;
+    }
 
-        if (empty($name)) {
-            $this->json('Error with execution - missing display name', 400);
-        }
-        $name = strtolower($name);
-        $displayName = !empty($displayName)
-            ? strtolower($displayName)
-            : null;
-
-        $fuelType = new FuelType();
-        $fuelType->setName($name);
-        if (!empty($displayName)) {
-            $fuelType->setDisplayName($displayName);
-        }
-
-        $entityManager->persist($fuelType);
-        $entityManager->flush();
-
-        $fuelId = $fuelType->getId();
-
-        if (!empty($fuelId)) {
-            return $this->json([
-                'success' => true,
-                'id' => $fuelId
-            ]);
-        }
+    /**
+     * @Route("/fuel/new", methods={"POST"})
+     */
+    public function new(Request $request): JsonResponse
+    {
+        $result = $this->fuelTypeHelper->checkCreateFuelType($request);
 
         return $this->json(
-            'Error with execution',
-            400
+            $result,
+            !empty($result['success']) ? 200 : 400
         );
     }
 
     /**
      * @Route("/fuel/get/all")
      */
-    public function getAll(EntityManagerInterface $entityManager): JsonResponse
+    public function getAll(): JsonResponse
     {
-        $repository = $entityManager->getRepository(FuelType::class);
-        $fuelTypes = $repository
-            ->createQueryBuilder('c')
-            ->getQuery()
-            ->getResult(Query::HYDRATE_ARRAY);
+        $data = $this->fuelTypeRepository->getAllFuels();
 
-        if (!empty($fuelTypes)) {
-            return $this->json($fuelTypes);
-        }
-
-        return $this->json('No Data!', 400);
+        return $this->parseResult($data);
     }
 
     /**
      * @Route("/fuel/get/{id}", requirements={"id"="\d+"})
      */
-    public function getById(int $id, EntityManagerInterface $entityManager): JsonResponse
+    public function getById(int $id): JsonResponse
     {
-        $repo = $entityManager->getRepository(FuelType::class);
-        //TODO: find ways to handle missing ID
-        return $this->json([]);
+        $data = $this->fuelTypeRepository->getById($id);
+
+        return $this->parseResult($data);
     }
 
     /**
      * @Route("/fuel/get/{name}")
      */
-    public function getByName(FuelType $fuelType)
+    public function getByName(string $name) : JsonResponse
     {
-        //TODO: find ways to handle missing ID
-        return $this->json($fuelType);
+        $data = $this->fuelTypeRepository->getByName($name);
+
+        return $this->parseResult($data);
+    }
+
+    /**
+     * @Route("/fuel/delete/{param}")
+     */
+    public function delete($param): JsonResponse
+    {
+        $response = $this->fuelTypeHelper->checkDeleteFuelType($param);
+
+        return $this->json(
+            $response,
+            !empty($result['success']) ? 200 : 400
+        );
+    }
+
+    private function parseResult($data, $errorMessage = 'No data'): JsonResponse
+    {
+        if (!empty($data)) {
+            return $this->json($data);
+        }
+
+        return $this->json($errorMessage, 400);
     }
 }

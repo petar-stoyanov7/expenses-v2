@@ -53,6 +53,31 @@ class FuelTypeRepository extends ServiceEntityRepository
         ;
     }
 
+    public function getAllFuels() : array
+    {
+        return $this->createQueryBuilder('q')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    public function getById(int $id) : array
+    {
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.id = :val')
+            ->setParameter('val', $id)
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    public function getByName(string $name)
+    {
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.name = :val')
+            ->setParameter('val', $name)
+            ->getQuery()
+            ->getArrayResult();
+    }
+
 //    /**
 //     * @return FuelType[] Returns an array of FuelType objects
 //     */
