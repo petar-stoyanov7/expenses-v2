@@ -5,7 +5,6 @@ namespace App\Service;
 use App\Entity\FuelType;
 use App\Repository\FuelTypeRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class FuelTypeHelper
 {
@@ -20,19 +19,25 @@ class FuelTypeHelper
         $this->entityManager = $entityManager;
     }
 
-    public function checkCreateFuelType(Request $request)
+    public function checkCreateFuelType(array $fuelQuery) : array
     {
-        $name = $request->get('name');
-        $displayName = $request->get('displayName');
+        $response = [
+            "success" => false,
+            "message" => "Missing fuel name"
+        ];
+
+        $name = $fuelQuery['name'];
+        $displayName = !empty($fuelQuery['displayName']) ? $fuelQuery['displayName'] : '';
 
         if (empty($name)) {
-            return "Missing fuel name";
+            return $response;
         }
 
         $name = strtolower($name);
         $existingFuel = $this->fuelTypeRepository->getByName($name);
         if (!empty($existingFuel)) {
-            return "Fuel type already exists";
+            $response['message'] = "Fuel type already exists";
+            return $response;
         }
 
         $displayName = !empty($displayName)
@@ -51,12 +56,16 @@ class FuelTypeHelper
 
         return [
             'success'   => !empty($fuelId),
-            'id'        => $fuelId
+            'message'   => "Successfully created FuelType {$fuelId}",
         ];
     }
 
-    public function checkDeleteFuelType($param)
+    public function checkDeleteFuelType($param) : array
     {
+        $response = [
+            "success" => false,
+            "message" => "Fuel type does not exist"
+        ];
         if (is_numeric($param)) {
             $fuelType = $this->fuelTypeRepository->find($param);
         } else {
@@ -64,7 +73,7 @@ class FuelTypeHelper
         }
 
         if (empty($fuelType)) {
-            return "Fuel type does not exist";
+            return $response;
         }
 
         if (is_array($fuelType)) {
@@ -72,9 +81,11 @@ class FuelTypeHelper
         }
 
         $this->fuelTypeRepository->remove($fuelType, true);
+        $success = empty($fuelType->getId());
 
         return [
-            'success' => empty($fuelType->getId())
+            'success' => $success,
+            'message' => $success ? "Successfully deleted fuel type {$param}" : "Error with execution"
         ];
     }
 }

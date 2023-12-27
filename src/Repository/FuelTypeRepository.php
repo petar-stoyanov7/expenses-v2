@@ -40,18 +40,17 @@ class FuelTypeRepository extends ServiceEntityRepository
         }
     }
 
-    /**
-     * @return FuelType[] Returns an array of FuelType objects
-     */
-    public function findByFuelName(string $value): array
+    public function findByName(string $name)
     {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.name = :val')
-            ->setParameter('val', $value)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getResult()
-        ;
+        try {
+            return $this->createQueryBuilder('q')
+                ->andWhere('q.name = :val')
+                ->setParameter('val', $name)
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return [];
+        }
     }
 
     public function getAllFuels() : array
@@ -77,18 +76,5 @@ class FuelTypeRepository extends ServiceEntityRepository
             ->setParameter('val', $name)
             ->getQuery()
             ->getArrayResult();
-    }
-
-    public function findByName(string $name)
-    {
-        try {
-            return $this->createQueryBuilder('q')
-                ->andWhere('q.name = :val')
-                ->setParameter('val', $name)
-                ->getQuery()
-                ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            return [];
-        }
     }
 }

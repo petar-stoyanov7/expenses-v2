@@ -25,11 +25,12 @@ class FuelController extends AbstractController
     }
 
     /**
-     * @Route("/fuel/new", methods={"POST"})
+     * @Route("/fuel/add", methods={"POST"})
      */
     public function new(Request $request): JsonResponse
     {
-        $result = $this->fuelTypeHelper->checkCreateFuelType($request);
+        $query = $request->request->all();
+        $result = $this->fuelTypeHelper->checkCreateFuelType($query);
 
         return $this->json(
             $result,
