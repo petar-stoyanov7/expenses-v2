@@ -39,28 +39,47 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return User[] Returns an array of User objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('u.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findByUsername(string $value): array
+    {
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.username = :val')
+            ->setParameter('val', $value)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?User
-//    {
-//        return $this->createQueryBuilder('u')
-//            ->andWhere('u.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function getAllUsers(): array
+    {
+        return $this->createQueryBuilder('q')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    public function getById(int $id): array
+    {
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.id = :val')
+            ->setParameter('val', $id)
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    public function getByUsername(string $name)
+    {
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.username = :val')
+            ->setParameter('val', $name)
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    public function getByEmail(string $email)
+    {
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.email = :val')
+            ->setParameter('val', $email)
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

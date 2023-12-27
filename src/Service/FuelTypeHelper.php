@@ -56,7 +56,8 @@ class FuelTypeHelper
 
         return [
             'success'   => !empty($fuelId),
-            'message'   => "Successfully created FuelType {$fuelId}",
+            'message'   => "Successfully created FuelType",
+            'id'        => $fuelId
         ];
     }
 
