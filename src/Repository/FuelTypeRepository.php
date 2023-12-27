@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\FuelType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -78,28 +79,16 @@ class FuelTypeRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
-//    /**
-//     * @return FuelType[] Returns an array of FuelType objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('f.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?FuelType
-//    {
-//        return $this->createQueryBuilder('f')
-//            ->andWhere('f.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function findByName(string $name)
+    {
+        try {
+            return $this->createQueryBuilder('q')
+                ->andWhere('q.name = :val')
+                ->setParameter('val', $name)
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return [];
+        }
+    }
 }

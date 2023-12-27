@@ -60,7 +60,7 @@ class FuelTypeHelper
         if (is_numeric($param)) {
             $fuelType = $this->fuelTypeRepository->find($param);
         } else {
-            $fuelType = $this->fuelTypeRepository->findBy(['name' => $param]);
+            $fuelType = $this->fuelTypeRepository->findByName($param);
         }
 
         if (empty($fuelType)) {
