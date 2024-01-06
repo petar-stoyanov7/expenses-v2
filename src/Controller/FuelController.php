@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class FuelController extends AbstractController
+class FuelController extends AbstractExpenseController
 {
     private FuelTypeRepository $fuelTypeRepository;
 
@@ -30,12 +30,9 @@ class FuelController extends AbstractController
     public function new(Request $request): JsonResponse
     {
         $query = $request->request->all();
-        $result = $this->fuelTypeHelper->checkCreateFuelType($query);
+        $response = $this->fuelTypeHelper->checkCreateFuelType($query);
 
-        return $this->json(
-            $result,
-            !empty($result['success']) ? 200 : 400
-        );
+        return $this->parseResponse($response);
     }
 
     /**
@@ -45,7 +42,7 @@ class FuelController extends AbstractController
     {
         $data = $this->fuelTypeRepository->getAllFuels();
 
-        return $this->parseResult($data);
+        return $this->parseDbResponse($data);
     }
 
     /**
@@ -55,7 +52,7 @@ class FuelController extends AbstractController
     {
         $data = $this->fuelTypeRepository->getById($id);
 
-        return $this->parseResult($data);
+        return $this->parseDbResponse($data);
     }
 
     /**
@@ -65,7 +62,7 @@ class FuelController extends AbstractController
     {
         $data = $this->fuelTypeRepository->getByName($name);
 
-        return $this->parseResult($data);
+        return $this->parseDbResponse($data);
     }
 
     /**
@@ -79,14 +76,5 @@ class FuelController extends AbstractController
             $response,
             !empty($result['success']) ? 200 : 400
         );
-    }
-
-    private function parseResult($data, $errorMessage = 'No data'): JsonResponse
-    {
-        if (!empty($data)) {
-            return $this->json($data);
-        }
-
-        return $this->json($errorMessage, 400);
     }
 }

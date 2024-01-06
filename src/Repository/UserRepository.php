@@ -77,14 +77,14 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    public function getAllUsers(): array
+    public function getAllUsers() : array
     {
         return $this->createQueryBuilder('q')
             ->getQuery()
             ->getArrayResult();
     }
 
-    public function getById(int $id): array
+    public function getById(int $id) : array
     {
         return $this->createQueryBuilder('q')
             ->andWhere('q.id = :val')
@@ -93,7 +93,7 @@ class UserRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
-    public function getByUsername(string $name)
+    public function getByUsername(string $name) : array
     {
         return $this->createQueryBuilder('q')
             ->andWhere('q.username = :val')
@@ -102,7 +102,7 @@ class UserRepository extends ServiceEntityRepository
             ->getArrayResult();
     }
 
-    public function getByEmail(string $email)
+    public function getByEmail(string $email) : array
     {
         return $this->createQueryBuilder('q')
             ->andWhere('q.email = :val')

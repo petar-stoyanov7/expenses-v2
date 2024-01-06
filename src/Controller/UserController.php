@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class UserController extends AbstractController
+class UserController extends AbstractExpenseController
 {
     private UserHelper $userHelper;
 
@@ -28,10 +28,7 @@ class UserController extends AbstractController
         $user = $request->request->all();
         $response = $this->userHelper->checkCreateUser($user);
 
-        return $this->json(
-            $response,
-            !empty($response['success']) ? 200 : 400
-        );
+        return $this->parseResponse($response);
     }
 
     /**
@@ -42,10 +39,7 @@ class UserController extends AbstractController
         $data = $request->request->all();
         $response = $this->userHelper->checkEditUser($param, $data);
 
-        return $this->json(
-            $response,
-            !empty($response['success']) ? 200 : 400
-        );
+        return $this->parseResponse($response);
     }
 
 
@@ -58,10 +52,7 @@ class UserController extends AbstractController
 
         $response = $this->userHelper->login($data);
 
-        return $this->json(
-            $response,
-            !empty($response['success']) ? 200 : 400
-        );
+        return $this->parseResponse($response);
     }
 
     /**
@@ -71,10 +62,7 @@ class UserController extends AbstractController
     {
         $response = $this->userRepository->getAllUsers();
 
-        return $this->json(
-            $response,
-            !empty($response['success']) ? 200 : 400
-        );
+        return $this->parseDbResponse($response);
     }
 
     /**
@@ -84,10 +72,7 @@ class UserController extends AbstractController
     {
         $response = $this->userRepository->getById($id);
 
-        return $this->json(
-            $response,
-            !empty($response) ? 200 : 400
-        );
+        return $this->parseDbResponse($response);
     }
 
     /**
@@ -97,9 +82,7 @@ class UserController extends AbstractController
     {
         $response = $this->userRepository->getByUsername($username);
 
-        return $this->json(
-            $response,
-            !empty($response) ? 200 : 400
-        );
+        return $this->parseResponse($response);
     }
+
 }
