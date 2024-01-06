@@ -3,18 +3,29 @@
 namespace App\Service;
 
 use App\Entity\User;
+use App\Repository\CarFuelsRepository;
+use App\Repository\CarRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class UserHelper
 {
     private UserRepository $userRepository;
+    private CarRepository $carRepository;
+    private CarFuelsRepository $carFuelsRepository;
     private EntityManagerInterface $entityManager;
 
 
-    public function __construct(UserRepository $userRepo, EntityManagerInterface $entityManager)
+    public function __construct(
+        UserRepository $userRepo,
+        CarRepository $carRepository,
+        CarFuelsRepository $carFuelsRepository,
+        EntityManagerInterface $entityManager
+    )
     {
         $this->userRepository = $userRepo;
+        $this->carRepository = $carRepository;
+        $this->carFuelsRepository = $carFuelsRepository;
         $this->entityManager = $entityManager;
     }
 
@@ -68,6 +79,53 @@ class UserHelper
             'success'   => $success,
             'message'   => $success ? "User successfully created user" : "Error creating user",
             'data'      => ['userId' => $userId]
+        ];
+    }
+
+    public function getUserCars($userParam) : array
+    {
+        $response = [
+            'success' => false,
+            'message' => "Empty data"
+        ];
+
+        if (empty($userParam)) {
+            return $response;
+        }
+
+        if (is_numeric($userParam)) {
+            $user = $this->userRepository->getById($userParam);
+        } else {
+            $user = $this->userRepository->getByUsername($userParam);
+        }
+
+        if (empty($user)) {
+            $response['message'] = "No such user exists";
+            return $response;
+        }
+
+        $user = $user[0];
+
+        $cars = $this->carRepository->getByUserId($user['id']);
+
+        if (empty($cars)) {
+            $response['message'] = "User has no cars";
+            return $response;
+        }
+
+        foreach ($cars as $i => $car) {
+            $fuel = $this->carFuelsRepository->getCarFuels($car['id']);
+            if (empty($fuel)) {
+                continue;
+            }
+
+            $cars[$i]['fuel'] = $fuel;
+        }
+
+        return [
+            'success'   => true,
+            'message'   => "Data extracted successfully",
+            'data'      => $cars
         ];
     }
 

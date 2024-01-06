@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\CarFuels;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -39,28 +40,19 @@ class CarFuelsRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return CarFuels[] Returns an array of CarFuels objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
-
-//    public function findOneBySomeField($value): ?CarFuels
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function getCarFuels(int $carId)
+    {
+        return $this->createQueryBuilder('cf')
+            ->select('ft')
+            ->leftJoin(
+                'App\Entity\FuelType',
+                'ft',
+                \Doctrine\ORM\Query\Expr\Join::WITH,
+                'cf.fuel = ft.id'
+            )
+            ->where('cf.car = :car_id')
+            ->setParameter('car_id', $carId)
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

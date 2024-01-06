@@ -117,6 +117,30 @@ class CarHelper
         return $response;
     }
 
+    public function getAllCars() : array
+    {
+        $response = [
+            'success' => false,
+            'message' => "No cars present"
+        ];
+        $cars = $this->carRepository->getAllCars();
+
+        if (empty($cars)) {
+            return $response;
+        }
+
+        foreach ($cars as $i => $car) {
+            $cars[$i]['fuel'] = $this->carFuelsRepository->getCarFuels($car['id']);
+        }
+
+
+        return [
+            'success'   => true,
+            'message'   => "Cars provided",
+            'data'      => $cars
+        ];
+    }
+
     public function checkEditCar(array $carData) : array
     {
         //TODO: implement

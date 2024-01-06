@@ -80,7 +80,7 @@ class CarRepository extends ServiceEntityRepository
     public function getByUserId(int $userId) : array
     {
         return $this->createQueryBuilder('q')
-            ->andWhere('q.user_id = :val')
+            ->andWhere('q.user = :val')
             ->setParameter('val', $userId)
             ->getQuery()
             ->getArrayResult();

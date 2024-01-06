@@ -74,6 +74,16 @@ class UserController extends AbstractExpenseController
     }
 
     /**
+     * @Route("/user/get/{param}/cars", requirements={"id"="\d+"}, methods={"GET"})
+     */
+    public function getUserCars(int $param) : JsonResponse
+    {
+        $response = $this->userHelper->getUserCars($param);
+
+        return $this->parseResponse($response);
+    }
+
+    /**
      * @Route("/user/get/{username}", methods={"GET"})
      */
     public function getByUsername(string $username) : JsonResponse

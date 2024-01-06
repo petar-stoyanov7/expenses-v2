@@ -30,5 +30,34 @@ class CarController extends AbstractExpenseController
         return $this->parseResponse($response);
     }
 
+    /**
+     * @Route("/car/get/all", methods={"GET"})
+     */
+    public function getAll() : JsonResponse
+    {
+        $response = $this->carHelper->getAllCars();
 
+        return $this->parseResponse($response);
+    }
+
+    /**
+     * @Route("/car/get/{carId}", methods={"GET"})
+     */
+    public function getById(int $carId) : JsonResponse
+    {
+        $response = $this->carRepository->getByCarId($carId);
+
+        return $this->parseDbResponse($response);
+    }
+
+    /**
+     * @Route("/car/edit/{param}", methods={"POST"})
+     */
+    public function edit(Request $request, $param) : JsonResponse
+    {
+        $carData = $this->getRequestData($request);
+        $response = $this->carHelper->checkEditCar($carData, $param);
+
+        return $this->parseResponse($response);
+    }
 }
