@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,16 +22,25 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    public function add(User $entity, bool $flush = false): void
+    public function add(User $user, bool $flush = false) : void
     {
-        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->persist($user);
 
         if ($flush) {
             $this->getEntityManager()->flush();
         }
     }
 
-    public function remove(User $entity, bool $flush = false): void
+    public function edit(User $user, bool $flush = false) : void
+    {
+        $this->getEntityManager()->persist($user);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function remove(User $entity, bool $flush = false) : void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -39,14 +49,32 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    public function findByUsername(string $value): array
+    public function findByUsername(string $value)
     {
-        return $this->createQueryBuilder('f')
-            ->andWhere('f.username = :val')
-            ->setParameter('val', $value)
-            ->setMaxResults(1)
-            ->getQuery()
-            ->getResult();
+        try {
+            return $this->createQueryBuilder('f')
+                ->andWhere('f.username = :val')
+                ->setParameter('val', $value)
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
+    }
+
+    public function findByEmail(string $value)
+    {
+        try {
+            return $this->createQueryBuilder('f')
+                ->andWhere('f.email = :val')
+                ->setParameter('val', $value)
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
     }
 
     public function getAllUsers(): array

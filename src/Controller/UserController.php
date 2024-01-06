@@ -35,13 +35,28 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/user/edit/{id}", methods={"POST"})
+     * @Route("/user/edit/{param}", methods={"POST"})
      */
-    public function edit(Request $request, int $id) : JsonResponse
+    public function edit(Request $request, $param) : JsonResponse
     {
-        //TODO: implement
         $data = $request->request->all();
-        $response = $this->userHelper->checkEditUser($id, $data);
+        $response = $this->userHelper->checkEditUser($param, $data);
+
+        return $this->json(
+            $response,
+            !empty($response['success']) ? 200 : 400
+        );
+    }
+
+
+    /**
+     * @Route("/user/login", methods={"POST"})
+     */
+    public function login(Request $request) : JsonResponse
+    {
+        $data = $request->request->all();
+
+        $response = $this->userHelper->login($data);
 
         return $this->json(
             $response,
@@ -52,9 +67,10 @@ class UserController extends AbstractController
     /**
      * @Route("/user/get/all", methods={"GET"})
      */
-    public function getAll()
+    public function getAll() : JsonResponse
     {
         $response = $this->userRepository->getAllUsers();
+
         return $this->json(
             $response,
             !empty($response['success']) ? 200 : 400
@@ -64,7 +80,7 @@ class UserController extends AbstractController
     /**
      * @Route("/user/get/{id}", requirements={"id"="\d+"}, methods={"GET"})
      */
-    public function getById(int $id)
+    public function getById(int $id) : JsonResponse
     {
         $response = $this->userRepository->getById($id);
 
@@ -77,7 +93,7 @@ class UserController extends AbstractController
     /**
      * @Route("/user/get/{username}", methods={"GET"})
      */
-    public function getByUsername(string $username)
+    public function getByUsername(string $username) : JsonResponse
     {
         $response = $this->userRepository->getByUsername($username);
 
