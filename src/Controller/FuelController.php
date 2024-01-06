@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Repository\FuelTypeRepository;
 use App\Service\FuelTypeHelper;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -72,9 +71,6 @@ class FuelController extends AbstractExpenseController
     {
         $response = $this->fuelTypeHelper->checkDeleteFuelType($param);
 
-        return $this->json(
-            $response,
-            !empty($result['success']) ? 200 : 400
-        );
+        return $this->parseResponse($response);
     }
 }

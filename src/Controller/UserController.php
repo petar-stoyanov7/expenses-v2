@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Repository\UserRepository;
 use App\Service\UserHelper;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -25,7 +24,7 @@ class UserController extends AbstractExpenseController
      */
     public function add(Request $request) : JsonResponse
     {
-        $user = $request->request->all();
+        $user = $this->getRequestData($request);
         $response = $this->userHelper->checkCreateUser($user);
 
         return $this->parseResponse($response);
@@ -36,7 +35,7 @@ class UserController extends AbstractExpenseController
      */
     public function edit(Request $request, $param) : JsonResponse
     {
-        $data = $request->request->all();
+        $data = $this->getRequestData($request);
         $response = $this->userHelper->checkEditUser($param, $data);
 
         return $this->parseResponse($response);
@@ -48,8 +47,7 @@ class UserController extends AbstractExpenseController
      */
     public function login(Request $request) : JsonResponse
     {
-        $data = $request->request->all();
-
+        $data = $this->getRequestData($request);
         $response = $this->userHelper->login($data);
 
         return $this->parseResponse($response);

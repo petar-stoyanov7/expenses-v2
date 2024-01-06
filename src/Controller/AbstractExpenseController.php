@@ -4,9 +4,29 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 abstract class AbstractExpenseController extends AbstractController
 {
+    protected function getRequestData(Request $request) : array
+    {
+        if ('json' === $request->getContentType()) {
+            $data = $request->getContent();
+            if (empty($data)) {
+                return [];
+            }
+
+            return json_decode($data, true);
+        }
+
+        $data = $request->request->all();
+        if (empty($data)) {
+            return [];
+        }
+
+        return $data;
+    }
+
     protected function parseResponse(array $data) : JsonResponse
     {
         if (empty($data)) {
