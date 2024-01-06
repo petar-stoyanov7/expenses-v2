@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Car;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,9 +22,17 @@ class CarRepository extends ServiceEntityRepository
         parent::__construct($registry, Car::class);
     }
 
-    public function add(Car $entity, bool $flush = false): void
+    public function add(Car $car, bool $flush = false): void
     {
-        $this->getEntityManager()->persist($entity);
+        $this->getEntityManager()->persist($car);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+    public function edit(Car $car, bool $flush = false): void
+    {
+        $this->getEntityManager()->persist($car);
 
         if ($flush) {
             $this->getEntityManager()->flush();
@@ -39,28 +48,41 @@ class CarRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Car[] Returns an array of Car objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    public function findByUserId(int $userId)
+    {
+        try {
+            return $this->createQueryBuilder('f')
+                ->andWhere('f.user_id = :val')
+                ->setParameter('val', $userId)
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
+    }
 
-//    public function findOneBySomeField($value): ?Car
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    public function getAllCars() : array
+    {
+        return $this->createQueryBuilder('q')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    public function getByCarId(int $carId) : array
+    {
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.id = :val')
+            ->setParameter('val', $carId)
+            ->getQuery()
+            ->getArrayResult();
+    }
+    public function getByUserId(int $userId) : array
+    {
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.user_id = :val')
+            ->setParameter('val', $userId)
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

@@ -67,7 +67,7 @@ class UserHelper
         return [
             'success'   => $success,
             'message'   => $success ? "User successfully created user" : "Error creating user",
-            'id'        => $userId
+            'data'      => ['userId' => $userId]
         ];
     }
 

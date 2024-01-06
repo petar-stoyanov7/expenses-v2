@@ -4,9 +4,11 @@ namespace App\Entity;
 
 use App\Repository\CarFuelsRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Table;
 
 /**
  * @ORM\Entity(repositoryClass=CarFuelsRepository::class)
+ * @Table(name="car_fuels")
  */
 class CarFuels
 {

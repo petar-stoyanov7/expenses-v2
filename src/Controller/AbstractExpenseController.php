@@ -50,7 +50,7 @@ abstract class AbstractExpenseController extends AbstractController
         ];
 
         if (!empty($data['data'])) {
-            $response['data'] = $data;
+            $response['data'] = $data['data'];
         }
 
         return $this->json(
