@@ -29,6 +29,57 @@ class UserHelper
         $this->entityManager = $entityManager;
     }
 
+    public function getUser($param) : array
+    {
+        $response = [
+            'success' => false,
+            'message' => "Insufficient data"
+        ];
+        if (empty($param)) {
+            return $response;
+        }
+
+        if (is_numeric($param)) {
+            $user = $this->userRepository->getById($param);
+        } else {
+            $user = $this->userRepository->getByUsername($param);
+        }
+        if (empty($user)) {
+            $response['message'] = "User does not exist";
+            return $response;
+        }
+        $user = $user[0];
+        unset($user['password']);
+
+        return [
+            'success'   => true,
+            'message'   => "User data extracted successfully",
+            'data'      => $user
+        ];
+    }
+
+    public function getUserDetails($param) : array
+    {
+        $userData = $this->getUser($param);
+        if (!$userData['success']) {
+            return $userData;
+        }
+
+        $user = $userData['data'];
+
+        $cars = $this->getUserCars($param);
+        $user['cars'] = [];
+        if (!empty($cars) && !empty($cars['data'])) {
+            $user['cars'] = $cars['data'];
+        }
+
+        return [
+            'success'   => true,
+            'message'   => "User data extracted successfully",
+            'data'      => $user
+        ];
+    }
+
     public function getAll() : array
     {
         $response = [
@@ -54,15 +105,12 @@ class UserHelper
 
     public function getAllDetail() : array
     {
-        $response = [
-            'success' => false,
-            'message' => "No users exist"
-        ];
-
-        $users = $this->userRepository->getAllUsers();
-        if (empty($users)) {
-            return $response;
+        $userData = $this->getAll();
+        if (!$userData['success']) {
+            return $userData;
         }
+
+        $users = $userData['data'];
 
         foreach ($users as $i => $user) {
             unset($users[$i]['password']);

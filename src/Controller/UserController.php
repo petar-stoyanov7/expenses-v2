@@ -74,13 +74,23 @@ class UserController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/user/get/{id}", requirements={"id"="\d+"}, methods={"GET"})
+     * @Route("/user/get/{param}", methods={"GET"})
      */
-    public function getById(int $id) : JsonResponse
+    public function get($param) : JsonResponse
     {
-        $response = $this->userRepository->getById($id);
+        $response = $this->userHelper->getUser($param);
 
-        return $this->parseDbResponse($response);
+        return $this->parseResponse($response);
+    }
+
+    /**
+     * @Route("/user/get/{param}/detail", methods={"GET"})
+     */
+    public function getDetail($param) : JsonResponse
+    {
+        $response = $this->userHelper->getUserDetails($param);
+
+        return $this->parseResponse($response);
     }
 
     /**
@@ -92,15 +102,4 @@ class UserController extends AbstractExpenseController
 
         return $this->parseResponse($response);
     }
-
-    /**
-     * @Route("/user/get/{username}", methods={"GET"})
-     */
-    public function getByUsername(string $username) : JsonResponse
-    {
-        $response = $this->userRepository->getByUsername($username);
-
-        return $this->parseResponse($response);
-    }
-
 }
