@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\CarFuels;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -39,6 +40,23 @@ class CarFuelsRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    public function getByCarIdAndFuelId(int $carId, int $fuelId)
+    {
+        try {
+            return $this->createQueryBuilder('f')
+                ->andWhere('f.car = :car')
+                ->andWhere('f.fuel = :fuel')
+                ->setParameters([
+                    'car' => $carId,
+                    'fuel' => $fuelId
+                ])
+                ->setMaxResults(1)
+                ->getQuery()
+                ->getOneOrNullResult();
+        } catch (NonUniqueResultException $e) {
+            return null;
+        }
+    }
 
     public function getCarFuels(int $carId)
     {
@@ -47,7 +65,7 @@ class CarFuelsRepository extends ServiceEntityRepository
             ->leftJoin(
                 'App\Entity\FuelType',
                 'ft',
-                \Doctrine\ORM\Query\Expr\Join::WITH,
+                Join::WITH,
                 'cf.fuel = ft.id'
             )
             ->where('cf.car = :car_id')

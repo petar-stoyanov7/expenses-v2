@@ -141,10 +141,117 @@ class CarHelper
         ];
     }
 
-    public function checkEditCar(array $carData) : array
+    public function checkEditCar(array $carData, $id) : array
     {
-        //TODO: implement
-        return [];
+        $response = [
+            'success' => false,
+            'message' => "Missing data"
+        ];
+        if (empty($id) || empty($carData)) {
+            return $response;
+        }
+
+        $car = $this->carRepository->find($id);
+        if (empty($car)) {
+            $response['message'] = "No such car exists";
+            return $response;
+        }
+
+        $isChanged = false;
+        if (!empty($carData['userId']) && $carData['userId'] !== $car->getUser()->getId()) {
+            $user = $this->userRepository->find($carData['userId']);
+            $car->setUser($user);
+            $isChanged = true;
+        }
+        if (!empty($carData['brand']) && $carData['brand'] !== $car->getBrand()) {
+            $car->setBrand($carData['brand']);
+            $isChanged = true;
+        }
+        if (!empty($carData['model']) && $carData['model'] !== $car->getModel()) {
+            $car->setModel($carData['model']);
+            $isChanged = true;
+        }
+        if (!empty($carData['model']) && $carData['model'] !== $car->getModel()) {
+            $car->setModel($carData['model']);
+            $isChanged = true;
+        }
+        if (!empty($carData['color']) && $carData['color'] !== $car->getColor()) {
+            $car->setColor($carData['color']);
+            $isChanged = true;
+        }
+        if (!empty($carData['mileage']) && $carData['mileage'] !== $car->getMileage()) {
+            $car->setMileage($carData['mileage']);
+            $isChanged = true;
+        }
+        if (!empty($carData['year']) && $carData['year'] !== $car->getYear()) {
+            $car->setYear($carData['year']);
+            $isChanged = true;
+        }
+        if (!empty($carData['notes']) && $carData['notes'] !== $car->getNotes()) {
+            $car->setNotes($carData['notes']);
+            $isChanged = true;
+        }
+
+        if ($isChanged) {
+            $this->carRepository->edit($car, true);
+        }
+
+        $newFuelIds = $carData['fuel'];
+        if (
+            !empty($newFuelIds) &&
+            is_array($newFuelIds) &&
+            $this->checkFuelValidity($newFuelIds)
+        ) {
+            $currentFuel = $this->carFuelsRepository->getCarFuels($id);
+            $currentFuelIds = array_column($currentFuel, 'id');
+
+            if (count($currentFuelIds) >= count($newFuelIds)) {
+                foreach ($currentFuelIds as $i => $id) {
+                    if (in_array($id, $newFuelIds)) {
+                        $deleteKey = array_search($id, $newFuelIds);
+                        unset($newFuelIds[$deleteKey]);
+                        unset($currentFuelIds[$i]);
+                    }
+                }
+            } else {
+                foreach ($newFuelIds as $i => $id) {
+                    if (in_array($id, $currentFuelIds)) {
+                        $deleteKey = array_search($id, $newFuelIds);
+                        unset($newFuelIds[$i]);
+                        unset($currentFuelIds[$deleteKey]);
+                    }
+                }
+            }
+
+            if (!empty($currentFuelIds)) {
+                $isChanged = true;
+                foreach ($currentFuelIds as $fuelId) {
+                    $carFuel = $this->carFuelsRepository->getByCarIdAndFuelId($car->getId(), $fuelId);
+                    $this->carFuelsRepository->remove($carFuel, true);
+                }
+            }
+            if (!empty($newFuelIds)) {
+                $isChanged = true;
+                foreach ($newFuelIds as $fuelId) {
+                    $fuelType = $this->fuelTypeRepository->find($fuelId);
+                    $carFuel = new CarFuels();
+                    $carFuel
+                        ->setCar($car)
+                        ->setFuel($fuelType);
+                    $this->carFuelsRepository->add($carFuel, true);
+                }
+            }
+        }
+
+        if ($isChanged) {
+            return [
+                'success'   => true,
+                'message'   => "Car edited successfully."
+            ];
+        }
+
+        $response['message'] = "Sent data is the same as the current car";
+        return $response;
     }
 
     private function checkFuelValidity($fuelData) : bool

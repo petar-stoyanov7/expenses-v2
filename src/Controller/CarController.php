@@ -51,12 +51,12 @@ class CarController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/car/edit/{param}", methods={"POST"})
+     * @Route("/car/edit/{id}", methods={"POST"})
      */
-    public function edit(Request $request, $param) : JsonResponse
+    public function edit(Request $request, $id) : JsonResponse
     {
         $carData = $this->getRequestData($request);
-        $response = $this->carHelper->checkEditCar($carData, $param);
+        $response = $this->carHelper->checkEditCar($carData, $id);
 
         return $this->parseResponse($response);
     }
