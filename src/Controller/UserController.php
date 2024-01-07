@@ -58,9 +58,19 @@ class UserController extends AbstractExpenseController
      */
     public function getAll() : JsonResponse
     {
-        $response = $this->userRepository->getAllUsers();
+        $response = $this->userHelper->getAll();
 
-        return $this->parseDbResponse($response);
+        return $this->parseResponse($response);
+    }
+
+    /**
+     * @Route("/user/get/all/detail", methods={"GET"})
+     */
+    public function getAllDetail() : JsonResponse
+    {
+        $response = $this->userHelper->getAllDetail();
+
+        return $this->parseResponse($response);
     }
 
     /**

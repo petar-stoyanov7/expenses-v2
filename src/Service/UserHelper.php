@@ -29,6 +29,57 @@ class UserHelper
         $this->entityManager = $entityManager;
     }
 
+    public function getAll() : array
+    {
+        $response = [
+            'success' => false,
+            'message' => "No users exist"
+        ];
+
+        $users = $this->userRepository->getAllUsers();
+        if (empty($users)) {
+            return $response;
+        }
+
+        foreach ($users as $i => $user) {
+            unset($users[$i]['password']);
+        }
+
+        return [
+            'success'   => true,
+            'message'   => "User list successfully generated.",
+            'data'      => $users
+        ];
+    }
+
+    public function getAllDetail() : array
+    {
+        $response = [
+            'success' => false,
+            'message' => "No users exist"
+        ];
+
+        $users = $this->userRepository->getAllUsers();
+        if (empty($users)) {
+            return $response;
+        }
+
+        foreach ($users as $i => $user) {
+            unset($users[$i]['password']);
+            $cars = $this->getUserCars($user['id']);
+            $users[$i]['cars'] = [];
+            if (!empty($cars) && !empty($cars['data'])) {
+                $users[$i]['cars'] = $cars['data'];
+            }
+        }
+
+        return [
+            'success'   => true,
+            'message'   => "Detailed user list successfully generated",
+            'data'      => $users
+        ];
+    }
+
     public function checkCreateUser($data) : array
     {
         $response = [
