@@ -60,4 +60,14 @@ class CarController extends AbstractExpenseController
 
         return $this->parseResponse($response);
     }
+
+    /**
+     * @Route("/car/delete/{id}", methods={"POST","GET"})
+     */
+    public function delete($id) : JsonResponse
+    {
+        $response = $this->carHelper->checkDeleteCar($id);
+
+        return $this->parseResponse($response);
+    }
 }

@@ -254,6 +254,38 @@ class CarHelper
         return $response;
     }
 
+    public function checkDeleteCar(int $carId) : array
+    {
+        $response = [
+            'success'   => false,
+            'message'   => "Missing data"
+        ];
+        if (empty($carId)) {
+            return $response;
+        }
+
+        $car = $this->carRepository->find($carId);
+        if (empty($car)) {
+            $response['message'] = "No such car exists";
+            return $response;
+        }
+
+        $carFuels = $this->carFuelsRepository->findByCarId($carId);
+        if (!empty($carFuels)) {
+            foreach ($carFuels as $carFuel) {
+                $this->carFuelsRepository->remove($carFuel);
+            }
+            $this->entityManager->flush();
+        }
+
+        $this->carRepository->remove($car, true);
+
+        return [
+            'success' => true,
+            'message' => "Car deleted successfully"
+        ];
+    }
+
     private function checkFuelValidity($fuelData) : bool
     {
         if (is_array($fuelData)) {
