@@ -7,12 +7,14 @@ use App\Repository\CarFuelsRepository;
 use App\Repository\CarRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 class UserHelper
 {
     private UserRepository $userRepository;
     private CarRepository $carRepository;
     private CarFuelsRepository $carFuelsRepository;
+    private CarHelper $carHelper;
     private EntityManagerInterface $entityManager;
 
 
@@ -20,12 +22,14 @@ class UserHelper
         UserRepository $userRepo,
         CarRepository $carRepository,
         CarFuelsRepository $carFuelsRepository,
+        CarHelper $carHelper,
         EntityManagerInterface $entityManager
     )
     {
         $this->userRepository = $userRepo;
         $this->carRepository = $carRepository;
         $this->carFuelsRepository = $carFuelsRepository;
+        $this->carHelper = $carHelper;
         $this->entityManager = $entityManager;
     }
 
@@ -139,6 +143,11 @@ class UserHelper
             empty($data['password']) ||
             empty($data['email'])
         ) {
+            return $response;
+        }
+
+        if (strlen($data['password']) < 6) {
+            $response['message'] = "Password is too short";
             return $response;
         }
 
@@ -321,5 +330,49 @@ class UserHelper
 
         $response['message'] = "Username or password incorrect";
         return $response;
+    }
+
+    public function checkDeleteUser($param) : array
+    {
+        $response = [
+            'success' => false,
+            'message' => "Missing data"
+        ];
+        if (empty($param)) {
+            return $response;
+        }
+
+        if (is_numeric($param)) {
+            $user = $this->userRepository->find($param);
+        } else {
+            $user = $this->userRepository->findByUsername($param);
+        }
+        if (empty($user)) {
+            $response['message'] = "No such user exist";
+            return $response;
+        }
+
+        $userId = $user->getId();
+
+        $userCars = $this->carRepository->getByUserId($userId);
+        if (!empty($userCars)) {
+            foreach ($userCars as $car) {
+                $this->carHelper->checkDeleteCar($car['id']);
+            }
+            $this->entityManager->flush();
+        }
+
+        try {
+            $this->userRepository->remove($user);
+        } catch (Exception $e) {
+            $response['message'] = "Something went wrong";
+            return $response;
+        }
+
+        return [
+            'success'   => true,
+            'message'   => "User successfully deleted",
+            'data'      => ['userId' => $userId]
+        ];
     }
 }

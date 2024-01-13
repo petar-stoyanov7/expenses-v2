@@ -41,6 +41,16 @@ class UserController extends AbstractExpenseController
         return $this->parseResponse($response);
     }
 
+    /**
+     * @Route("/user/delete/{param}", methods={"POST","GET"})
+     */
+    public function delete($param) : JsonResponse
+    {
+        $response = $this->userHelper->checkDeleteUser($param);
+
+        return $this->parseResponse($response);
+    }
+
 
     /**
      * @Route("/user/login", methods={"POST"})

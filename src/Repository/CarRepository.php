@@ -30,6 +30,7 @@ class CarRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+
     public function edit(Car $car, bool $flush = false): void
     {
         $this->getEntityManager()->persist($car);
@@ -50,26 +51,22 @@ class CarRepository extends ServiceEntityRepository
 
     public function findByUserId(int $userId)
     {
-        try {
-            return $this->createQueryBuilder('f')
-                ->andWhere('f.user_id = :val')
-                ->setParameter('val', $userId)
-                ->setMaxResults(1)
-                ->getQuery()
-                ->getOneOrNullResult();
-        } catch (NonUniqueResultException $e) {
-            return null;
-        }
+        return $this->createQueryBuilder('f')
+            ->andWhere('f.user_id = :val')
+            ->setParameter('val', $userId)
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getResult();
     }
 
-    public function getAllCars() : array
+    public function getAllCars(): array
     {
         return $this->createQueryBuilder('q')
             ->getQuery()
             ->getArrayResult();
     }
 
-    public function getByCarId(int $carId) : array
+    public function getByCarId(int $carId): array
     {
         return $this->createQueryBuilder('q')
             ->andWhere('q.id = :val')
@@ -77,7 +74,8 @@ class CarRepository extends ServiceEntityRepository
             ->getQuery()
             ->getArrayResult();
     }
-    public function getByUserId(int $userId) : array
+
+    public function getByUserId(int $userId): array
     {
         return $this->createQueryBuilder('q')
             ->andWhere('q.user = :val')
