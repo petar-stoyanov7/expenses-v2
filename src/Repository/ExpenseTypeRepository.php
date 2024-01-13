@@ -53,4 +53,29 @@ class ExpenseTypeRepository extends ServiceEntityRepository
             return [];
         }
     }
+
+    public function getAllExpenseTypes()
+    {
+        return $this->createQueryBuilder('q')
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    public function getById(int $id): array
+    {
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.id = :val')
+            ->setParameter('val', $id)
+            ->getQuery()
+            ->getArrayResult();
+    }
+
+    public function getByName(string $name): array
+    {
+        return $this->createQueryBuilder('q')
+            ->andWhere('q.name = :val')
+            ->setParameter('val', $name)
+            ->getQuery()
+            ->getArrayResult();
+    }
 }

@@ -4,9 +4,11 @@ namespace App\Entity;
 
 use App\Repository\ExpenseTypeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Table;
 
 /**
  * @ORM\Entity(repositoryClass=ExpenseTypeRepository::class)
+ * @Table(name="expense_types")
  */
 class ExpenseType
 {
