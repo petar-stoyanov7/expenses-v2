@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Expense;
+use App\Repository\CarFuelsRepository;
 use App\Repository\CarRepository;
 use App\Repository\ExpenseRepository;
 use App\Repository\ExpenseTypeRepository;
@@ -15,6 +16,7 @@ class ExpenseHelper
     private ExpenseTypeRepository $expenseTypeRepository;
     private FuelTypeRepository $fuelTypeRepository;
     private CarRepository $carRepository;
+    private CarFuelsRepository $carFuelsRepository;
     private EntityManagerInterface $entityManager;
 
     public function __construct(
@@ -22,6 +24,7 @@ class ExpenseHelper
         ExpenseTypeRepository  $expenseTypeRepository,
         FuelTypeRepository     $fuelTypeRepository,
         CarRepository          $carRepository,
+        CarFuelsRepository     $carFuelsRepository,
         EntityManagerInterface $entityManager
     )
     {
@@ -29,6 +32,7 @@ class ExpenseHelper
         $this->expenseTypeRepository = $expenseTypeRepository;
         $this->fuelTypeRepository = $fuelTypeRepository;
         $this->carRepository = $carRepository;
+        $this->carFuelsRepository = $carFuelsRepository;
         $this->entityManager = $entityManager;
     }
 
@@ -159,6 +163,13 @@ class ExpenseHelper
             $fuelType = $this->fuelTypeRepository->find($data['fuelId']);
             if (empty($fuelType)) {
                 $response['message'] = "No such fuel type exists";
+                return $response;
+            }
+
+            $carFuels = $this->carFuelsRepository->getCarFuels($car->getId());
+            $carFuels = array_column($carFuels, 'id');
+            if (!in_array($data['fuelId'], $carFuels)) {
+                $response['message'] = "This is not the correct fuel type for this car";
                 return $response;
             }
 
