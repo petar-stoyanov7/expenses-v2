@@ -62,9 +62,15 @@ class Car
      */
     private $fuels;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Expense::class, mappedBy="car", orphanRemoval=true)
+     */
+    private $expenses;
+
     public function __construct()
     {
         $this->fuels = new ArrayCollection();
+        $this->expenses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -180,6 +186,36 @@ class Car
             // set the owning side to null (unless already changed)
             if ($fuel->getCar() === $this) {
                 $fuel->setCar(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Expense>
+     */
+    public function getExpenses(): Collection
+    {
+        return $this->expenses;
+    }
+
+    public function addExpense(Expense $expense): self
+    {
+        if (!$this->expenses->contains($expense)) {
+            $this->expenses[] = $expense;
+            $expense->setCar($this);
+        }
+
+        return $this;
+    }
+
+    public function removeExpense(Expense $expense): self
+    {
+        if ($this->expenses->removeElement($expense)) {
+            // set the owning side to null (unless already changed)
+            if ($expense->getCar() === $this) {
+                $expense->setCar(null);
             }
         }
 
