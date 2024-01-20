@@ -6,6 +6,7 @@ use App\Entity\Car;
 use App\Entity\CarFuels;
 use App\Repository\CarFuelsRepository;
 use App\Repository\CarRepository;
+use App\Repository\ExpenseRepository;
 use App\Repository\FuelTypeRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -16,6 +17,7 @@ class CarHelper
     private FuelTypeRepository $fuelTypeRepository;
     private CarFuelsRepository $carFuelsRepository;
     private UserRepository $userRepository;
+    private ExpenseRepository $expenseRepository;
     private EntityManagerInterface $entityManager;
 
     public function __construct(
@@ -23,6 +25,7 @@ class CarHelper
         FuelTypeRepository $fuelTypeRepository,
         EntityManagerInterface $entityManager,
         CarFuelsRepository $carFuelsRepository,
+        ExpenseRepository $expenseRepository,
         UserRepository $userRepository
     )
     {
@@ -30,6 +33,7 @@ class CarHelper
         $this->fuelTypeRepository = $fuelTypeRepository;
         $this->carFuelsRepository = $carFuelsRepository;
         $this->userRepository = $userRepository;
+        $this->expenseRepository = $expenseRepository;
         $this->entityManager = $entityManager;
     }
 
@@ -270,13 +274,8 @@ class CarHelper
             return $response;
         }
 
-        $carFuels = $this->carFuelsRepository->findByCarId($carId);
-        if (!empty($carFuels)) {
-            foreach ($carFuels as $carFuel) {
-                $this->carFuelsRepository->remove($carFuel);
-            }
-            $this->entityManager->flush();
-        }
+        $this->carFuelsRepository->deleteByCarId($carId);
+        $this->expenseRepository->deleteByCarId($carId);
 
         $this->carRepository->remove($car, true);
 

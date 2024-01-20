@@ -84,4 +84,14 @@ class CarFuelsRepository extends ServiceEntityRepository
             ->getQuery()
             ->getArrayResult();
     }
+
+    public function deleteByCarId(int $carId)
+    {
+        return $this->createQueryBuilder('cf')
+            ->delete()
+            ->andWhere('cf.car = :carId')
+            ->setParameter('carId', $carId)
+            ->getQuery()
+            ->execute();
+    }
 }

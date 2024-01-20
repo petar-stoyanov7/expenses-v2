@@ -21,7 +21,7 @@ class ExpenseRepository extends ServiceEntityRepository
         parent::__construct($registry, Expense::class);
     }
 
-    public function add(Expense $entity, bool $flush = false): void
+    public function add(Expense $entity, bool $flush = false) : void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class ExpenseRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(Expense $entity, bool $flush = false): void
+    public function remove(Expense $entity, bool $flush = false) : void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -39,9 +39,23 @@ class ExpenseRepository extends ServiceEntityRepository
         }
     }
 
-    public function edit(Expense $expense, bool $flush = false): void
+    public function edit(Expense $expense, bool $flush = false) : void
     {
         $this->getEntityManager()->persist($expense);
+
+        if ($flush) {
+            $this->getEntityManager()->flush();
+        }
+    }
+
+    public function deleteByCarId(int $carId, bool $flush = false) : void
+    {
+        $this->createQueryBuilder('e')
+            ->delete()
+            ->andWhere('e.car = :carId')
+            ->setParameter('carId', $carId)
+            ->getQuery()
+            ->execute();
 
         if ($flush) {
             $this->getEntityManager()->flush();

@@ -363,7 +363,7 @@ class UserHelper
         }
 
         try {
-            $this->userRepository->remove($user);
+            $this->userRepository->remove($user, true);
         } catch (Exception $e) {
             $response['message'] = "Something went wrong";
             return $response;

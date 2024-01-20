@@ -88,7 +88,7 @@ class ExpenseHelper
         ];
     }
 
-    function checkDeleteExpense(int $expenseId): array
+    public function checkDeleteExpense(int $expenseId): array
     {
         $response = [
             'success' => false,
@@ -110,6 +110,27 @@ class ExpenseHelper
             'success'   => $success,
             'message'   => $success ? "Expense deleted successfully" : "Something went wrong"
         ];
+    }
+
+    public function deleteCarExpenses(int $carId) : array
+    {
+        $response = [
+            'success' => false,
+            'message' => "Missing data"
+        ];
+        if (empty($carId)) {
+            return $response;
+        }
+
+        $car = $this->carRepository->find($carId);
+        if (empty($car)) {
+            $response['message'] = "This car does not exists";
+            return $response;
+        }
+
+        $this->expenseRepository->deleteByCarId($carId);
+
+        return $response;
     }
 
     private function _checkExpenseData($data): array
