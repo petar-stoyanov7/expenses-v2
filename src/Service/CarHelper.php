@@ -73,7 +73,7 @@ class CarHelper
             $car->setNotes($carData['notes']);
         }
 
-        if (!$this->checkFuelValidity($carData['fuel'])) {
+        if (!$this->_checkFuelValidity($carData['fuel'])) {
             $response['message'] = "Invalid fuel type(s)";
             return $response;
         }
@@ -200,7 +200,7 @@ class CarHelper
         if (
             !empty($newFuelIds) &&
             is_array($newFuelIds) &&
-            $this->checkFuelValidity($newFuelIds)
+            $this->_checkFuelValidity($newFuelIds)
         ) {
             $currentFuel = $this->carFuelsRepository->getCarFuels($id);
             $currentFuelIds = array_column($currentFuel, 'id');
@@ -286,7 +286,7 @@ class CarHelper
         ];
     }
 
-    private function checkFuelValidity($fuelData) : bool
+    private function _checkFuelValidity($fuelData) : bool
     {
         if (is_array($fuelData)) {
             foreach ($fuelData as $fuelId) {

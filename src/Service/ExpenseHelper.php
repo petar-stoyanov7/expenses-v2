@@ -38,13 +38,13 @@ class ExpenseHelper
 
     public function checkCreateExpense(array $data): array
     {
-        $response = $this->checkExpenseData($data);
+        $response = $this->_checkExpenseData($data);
         if (!$response['success']) {
             return $response;
         }
 
         $expense = new Expense();
-        $expense = $this->setExpenseData($expense, $response);
+        $expense = $this->_setExpenseData($expense, $response);
 
         $this->expenseRepository->add($expense, true);
         $expenseId = $expense->getId();
@@ -73,12 +73,12 @@ class ExpenseHelper
             return $response;
         }
 
-        $response = $this->checkExpenseData($data);
+        $response = $this->_checkExpenseData($data);
         if (!$response['success']) {
             return $response;
         }
 
-        $expense = $this->setExpenseData($expense, $response);
+        $expense = $this->_setExpenseData($expense, $response);
         $this->expenseRepository->edit($expense, true);
 
         return [
@@ -112,7 +112,7 @@ class ExpenseHelper
         ];
     }
 
-    private function checkExpenseData($data): array
+    private function _checkExpenseData($data): array
     {
         $response = [
             'success' => false,
@@ -192,7 +192,9 @@ class ExpenseHelper
         return $response;
     }
 
-    private function setExpenseData(Expense $expense, array $data) : Expense
+
+
+    private function _setExpenseData(Expense $expense, array $data) : Expense
     {
         $expense->setValue($data['value']);
         $expense->setCar($data['car']);
