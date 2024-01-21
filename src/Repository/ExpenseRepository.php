@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Expense;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Query\Expr\Join;
 
 /**
  * @extends ServiceEntityRepository<Expense>
@@ -60,5 +61,63 @@ class ExpenseRepository extends ServiceEntityRepository
         if ($flush) {
             $this->getEntityManager()->flush();
         }
+    }
+
+    public function getExpenses($parameters)
+    {
+        $query = $this->createQueryBuilder('e')
+            ->select([
+                'e.id',
+                'c.id as car_id',
+                "CONCAT(c.brand,' ',c.model) as car",
+                'e.mileage',
+                "CASE WHEN (et.displayName IS NOT NULL) THEN et.displayName ELSE et.name END AS expense",
+                "CASE WHEN (ft.displayName IS NOT NULL) THEN ft.displayName ELSE ft.name END AS fuel",
+                'e.liters',
+                'e.value',
+                'e.notes',
+                'e.createdAt',
+                'e.updatedAt',
+            ])
+            ->leftJoin(
+                'App\Entity\ExpenseType',
+                'et',
+                Join::WITH,
+                'e.expenseType = et.id'
+            )
+            ->leftJoin(
+                'App\Entity\FuelType',
+                'ft',
+                Join::WITH,
+                'e.fuelType = ft.id'
+            )
+            ->leftJoin(
+                'App\Entity\Car',
+                'c',
+                Join::WITH,
+                'e.car = c.id'
+            );
+
+        if (isset($parameters['from'])) {
+            $query->andWhere('e.createdAt > :from')
+                ->setParameter('from', $parameters['from']);
+            unset($parameters['from']);
+        }
+        if (isset($parameters['to'])) {
+            $query->andWhere('e.createdAt < :to')
+                ->setParameter('to', $parameters['to']);
+            unset($parameters['to']);
+        }
+
+        if (!empty($parameters)) {
+            foreach ($parameters as $index => $value) {
+                $query->andWhere("e.{$index} = :{$index}");
+                $query->setParameter($index, $value);
+            }
+        }
+
+        return $query
+            ->getQuery()
+            ->getArrayResult();
     }
 }

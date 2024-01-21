@@ -133,6 +133,32 @@ class ExpenseHelper
         return $response;
     }
 
+    public function checkGetExpense(int $carId, $parameters = []) : array
+    {
+        $response = [
+            'success' => false,
+            'message' => "Missing car"
+        ];
+        if (empty($carId)) {
+            return $response;
+        }
+
+        $car = $this->carRepository->find($carId);
+        if (empty($car)) {
+            $response['message'] = "No such car exists";
+            return $response;
+        }
+
+        $parameters['car'] = $carId;
+        $expenses = $this->expenseRepository->getExpenses($parameters);
+
+        return [
+            'success'   => true,
+            'message'   => !empty($expenses) ? "Data retrieved successfully" : "No expenses with this parameters",
+            'data'      => $expenses
+        ];
+    }
+
     private function _checkExpenseData($data): array
     {
         $response = [
