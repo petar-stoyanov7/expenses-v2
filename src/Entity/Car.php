@@ -67,10 +67,16 @@ class Car
      */
     private $expenses;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Schedule::class, mappedBy="car")
+     */
+    private $schedules;
+
     public function __construct()
     {
         $this->fuels = new ArrayCollection();
         $this->expenses = new ArrayCollection();
+        $this->schedules = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -216,6 +222,36 @@ class Car
             // set the owning side to null (unless already changed)
             if ($expense->getCar() === $this) {
                 $expense->setCar(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Schedule>
+     */
+    public function getSchedules(): Collection
+    {
+        return $this->schedules;
+    }
+
+    public function addSchedule(Schedule $schedule): self
+    {
+        if (!$this->schedules->contains($schedule)) {
+            $this->schedules[] = $schedule;
+            $schedule->setCar($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSchedule(Schedule $schedule): self
+    {
+        if ($this->schedules->removeElement($schedule)) {
+            // set the owning side to null (unless already changed)
+            if ($schedule->getCar() === $this) {
+                $schedule->setCar(null);
             }
         }
 
