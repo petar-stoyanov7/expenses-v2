@@ -104,7 +104,7 @@ class UserController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/user/get/{param}/cars", requirements={"id"="\d+"}, methods={"GET"})
+     * @Route("/user/get/{param}/cars", methods={"GET"})
      */
     public function getUserCars(int $param) : JsonResponse
     {
