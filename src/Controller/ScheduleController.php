@@ -48,4 +48,25 @@ class ScheduleController extends AbstractExpenseController
         return $this->parseResponse($response);
     }
 
+    /**
+     * @Route("/schedule/get/{id}/all",  requirements={"id"="\d+"}, methods={"POST","GET"})
+     */
+    public function getAllCarSchedules(int $id): JsonResponse
+    {
+        $response = $this->scheduleHelper->checkGetCarSchedules($id);
+
+        return $this->parseResponse($response);
+    }
+
+    /**
+     * @Route("/schedule/get/{id}",  requirements={"id"="\d+"}, methods={"POST","GET"})
+     */
+    public function getCarSchedules(Request $request, int $id): JsonResponse
+    {
+        $scheduleData = $this->getRequestData($request);
+        $response = $this->scheduleHelper->checkGetCarSchedules($id, $scheduleData);
+
+        return $this->parseResponse($response);
+    }
+
 }

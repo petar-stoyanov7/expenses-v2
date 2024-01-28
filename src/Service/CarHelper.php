@@ -8,6 +8,7 @@ use App\Repository\CarFuelsRepository;
 use App\Repository\CarRepository;
 use App\Repository\ExpenseRepository;
 use App\Repository\FuelTypeRepository;
+use App\Repository\ScheduleRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -18,6 +19,7 @@ class CarHelper
     private CarFuelsRepository $carFuelsRepository;
     private UserRepository $userRepository;
     private ExpenseRepository $expenseRepository;
+    private ScheduleRepository $scheduleRepository;
     private EntityManagerInterface $entityManager;
 
     public function __construct(
@@ -26,6 +28,7 @@ class CarHelper
         EntityManagerInterface $entityManager,
         CarFuelsRepository $carFuelsRepository,
         ExpenseRepository $expenseRepository,
+        ScheduleRepository $scheduleRepository,
         UserRepository $userRepository
     )
     {
@@ -34,6 +37,7 @@ class CarHelper
         $this->carFuelsRepository = $carFuelsRepository;
         $this->userRepository = $userRepository;
         $this->expenseRepository = $expenseRepository;
+        $this->scheduleRepository = $scheduleRepository;
         $this->entityManager = $entityManager;
     }
 
@@ -276,6 +280,7 @@ class CarHelper
 
         $this->carFuelsRepository->deleteByCarId($carId);
         $this->expenseRepository->deleteByCarId($carId);
+        $this->scheduleRepository->deleteByCarId($carId);
 
         $this->carRepository->remove($car, true);
 

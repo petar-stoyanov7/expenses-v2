@@ -68,7 +68,7 @@ class ExpenseRepository extends ServiceEntityRepository
         $query = $this->createQueryBuilder('e')
             ->select([
                 'e.id',
-                'c.id as car_id',
+                'c.id as carId',
                 "CONCAT(c.brand,' ',c.model) as car",
                 'e.mileage',
                 "CASE WHEN (et.displayName IS NOT NULL) THEN et.displayName ELSE et.name END AS expense",
