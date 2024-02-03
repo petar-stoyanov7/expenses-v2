@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/user", name="user")
+ */
 class UserController extends AbstractExpenseController
 {
     private UserHelper $userHelper;
@@ -20,7 +23,7 @@ class UserController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/user/add", methods={"POST"})
+     * @Route("/add", methods={"POST"})
      */
     public function add(Request $request) : JsonResponse
     {
@@ -31,7 +34,7 @@ class UserController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/user/edit/{param}", methods={"POST"})
+     * @Route("/edit/{param}", methods={"POST"})
      */
     public function edit(Request $request, $param) : JsonResponse
     {
@@ -42,7 +45,7 @@ class UserController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/user/delete/{param}", methods={"POST","GET"})
+     * @Route("/delete/{param}", methods={"POST","GET"})
      */
     public function delete($param) : JsonResponse
     {
@@ -53,7 +56,7 @@ class UserController extends AbstractExpenseController
 
 
     /**
-     * @Route("/user/login", methods={"POST"})
+     * @Route("/login", methods={"POST"})
      */
     public function login(Request $request) : JsonResponse
     {
@@ -64,7 +67,7 @@ class UserController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/user/get/all", methods={"GET"})
+     * @Route("/get/all", methods={"GET"})
      */
     public function getAll() : JsonResponse
     {
@@ -74,7 +77,7 @@ class UserController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/user/get/all/detail", methods={"GET"})
+     * @Route("/get/all/detail", methods={"GET"})
      */
     public function getAllDetail() : JsonResponse
     {
@@ -84,7 +87,7 @@ class UserController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/user/get/{param}", methods={"GET"})
+     * @Route("/get/{param}", methods={"GET"})
      */
     public function get($param) : JsonResponse
     {
@@ -94,7 +97,7 @@ class UserController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/user/get/{param}/detail", methods={"GET"})
+     * @Route("/get/{param}/detail", methods={"GET"})
      */
     public function getDetail($param) : JsonResponse
     {
@@ -104,7 +107,7 @@ class UserController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/user/get/{param}/cars", methods={"GET"})
+     * @Route("/get/{param}/cars", methods={"GET"})
      */
     public function getUserCars(int $param) : JsonResponse
     {

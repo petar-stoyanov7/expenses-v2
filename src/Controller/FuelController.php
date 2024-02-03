@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/fuel", name="fuel")
+ */
 class FuelController extends AbstractExpenseController
 {
     private FuelTypeRepository $fuelTypeRepository;
@@ -24,7 +27,7 @@ class FuelController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/fuel/add", methods={"POST"})
+     * @Route("/add", methods={"POST"})
      */
     public function new(Request $request): JsonResponse
     {
@@ -35,7 +38,7 @@ class FuelController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/fuel/get/all")
+     * @Route("/get/all")
      */
     public function getAll(): JsonResponse
     {
@@ -45,7 +48,7 @@ class FuelController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/fuel/get/{id}", requirements={"id"="\d+"})
+     * @Route("/get/{id}", requirements={"id"="\d+"})
      */
     public function getById(int $id): JsonResponse
     {
@@ -55,7 +58,7 @@ class FuelController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/fuel/get/{name}")
+     * @Route("/get/{name}")
      */
     public function getByName(string $name) : JsonResponse
     {
@@ -65,7 +68,7 @@ class FuelController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/fuel/delete/{param}")
+     * @Route("/delete/{param}")
      */
     public function delete($param): JsonResponse
     {

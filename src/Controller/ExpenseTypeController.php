@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/expense-type", name="expense-type")
+ */
 class ExpenseTypeController extends AbstractExpenseController
 {
     private ExpenseTypeHelper $expenseTypeHelper;
@@ -23,7 +26,7 @@ class ExpenseTypeController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/expense-type/add", methods={"POST"})
+     * @Route("/add", methods={"POST"})
      */
     public function add(Request $request) : JsonResponse
     {
@@ -34,7 +37,7 @@ class ExpenseTypeController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/expense-type/get/all", methods={"GET"})
+     * @Route("/get/all", methods={"GET"})
      */
     public function getAll() : JsonResponse
     {
@@ -44,7 +47,7 @@ class ExpenseTypeController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/expense-type/get/{param}", methods={"GET"})
+     * @Route("/get/{param}", methods={"GET"})
      */
     public function getExpenseType($param) : JsonResponse
     {

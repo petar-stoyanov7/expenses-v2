@@ -7,6 +7,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/schedule", name="schedule")
+ */
 class ScheduleController extends AbstractExpenseController
 {
     private ScheduleHelper $scheduleHelper;
@@ -17,7 +20,7 @@ class ScheduleController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/schedule/add", methods={"POST"})
+     * @Route("/add", methods={"POST"})
      */
     public function add(Request $request): JsonResponse
     {
@@ -28,7 +31,7 @@ class ScheduleController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/schedule/edit/{id}",  requirements={"id"="\d+"}, methods={"POST"})
+     * @Route("/edit/{id}",  requirements={"id"="\d+"}, methods={"POST"})
      */
     public function edit(Request $request, int $id): JsonResponse
     {
@@ -39,7 +42,7 @@ class ScheduleController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/schedule/delete/{id}",  requirements={"id"="\d+"}, methods={"POST"})
+     * @Route("/delete/{id}",  requirements={"id"="\d+"}, methods={"POST"})
      */
     public function delete(int $id): JsonResponse
     {
@@ -49,7 +52,7 @@ class ScheduleController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/schedule/get/{id}/all",  requirements={"id"="\d+"}, methods={"POST","GET"})
+     * @Route("/get/{id}/all",  requirements={"id"="\d+"}, methods={"POST","GET"})
      */
     public function getAllCarSchedules(int $id): JsonResponse
     {
@@ -59,7 +62,7 @@ class ScheduleController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/schedule/get/{id}",  requirements={"id"="\d+"}, methods={"POST","GET"})
+     * @Route("/get/{id}",  requirements={"id"="\d+"}, methods={"POST","GET"})
      */
     public function getCarSchedules(Request $request, int $id): JsonResponse
     {

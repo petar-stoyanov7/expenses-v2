@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/expense", name="expense")
+ */
 class ExpenseController extends AbstractExpenseController
 {
     private ExpenseHelper $expenseHelper;
@@ -24,7 +27,7 @@ class ExpenseController extends AbstractExpenseController
 
 
     /**
-     * @Route("/expense/add", methods={"POST"})
+     * @Route("/add", methods={"POST"})
      */
     public function add(Request $request) : JsonResponse
     {
@@ -35,7 +38,7 @@ class ExpenseController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/expense/edit/{id}", requirements={"id"="\d+"}, methods={"POST"})
+     * @Route("/edit/{id}", requirements={"id"="\d+"}, methods={"POST"})
      */
     public function edit(Request $request, int $id) : JsonResponse
     {
@@ -46,7 +49,7 @@ class ExpenseController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/expense/delete/{id}", requirements={"id"="\d+"}, methods={"POST"})
+     * @Route("/delete/{id}", requirements={"id"="\d+"}, methods={"POST"})
      */
     public function delete($id) : JsonResponse
     {
@@ -56,7 +59,7 @@ class ExpenseController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/expense/get/{carId}", requirements={"carId"="\d+"}, methods={"POST", "GET"})
+     * @Route("/get/{carId}", requirements={"carId"="\d+"}, methods={"POST", "GET"})
      */
     public function getExpense($carId, Request $request) : JsonResponse
     {

@@ -8,6 +8,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * @Route("/car", name="car")
+ */
 class CarController extends AbstractExpenseController
 {
     private CarHelper $carHelper;
@@ -20,7 +23,7 @@ class CarController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/car/add", methods={"POST"})
+     * @Route("/add", methods={"POST"})
      */
     public function add(Request $request): JsonResponse
     {
@@ -31,7 +34,7 @@ class CarController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/car/get/all", methods={"GET"})
+     * @Route("/get/all", methods={"GET"})
      */
     public function getAll() : JsonResponse
     {
@@ -41,7 +44,7 @@ class CarController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/car/get/{carId}", methods={"GET"})
+     * @Route("/get/{carId}", methods={"GET"})
      */
     public function getById(int $carId) : JsonResponse
     {
@@ -51,7 +54,7 @@ class CarController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/car/edit/{id}", methods={"POST"})
+     * @Route("/edit/{id}", methods={"POST"})
      */
     public function edit(Request $request, $id) : JsonResponse
     {
@@ -62,7 +65,7 @@ class CarController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/car/delete/{id}", methods={"POST","GET"})
+     * @Route("/delete/{id}", methods={"POST","GET"})
      */
     public function delete($id) : JsonResponse
     {
