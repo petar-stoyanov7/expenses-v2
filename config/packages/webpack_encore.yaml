@@ -5,8 +5,8 @@ webpack_encore:
     # output_path: false
 
     # Set attributes that will be rendered on all script and link tags
-    script_attributes:
-        defer: true
+#    script_attributes:
+#        defer: true
         # Uncomment (also under link_attributes) if using Turbo Drive
         # https://turbo.hotwired.dev/handbook/drive#reloading-when-assets-change
         # 'data-turbo-track': reload
@@ -30,9 +30,9 @@ webpack_encore:
         # pass the build name as the 3rd argument to the Twig functions
         # {{ encore_entry_script_tags('entry1', null, 'frontend') }}
 
-framework:
-    assets:
-        json_manifest_path: '%kernel.project_dir%/public/build/manifest.json'
+#framework:
+#    assets:
+#        json_manifest_path: '%kernel.project_dir%/public/build/manifest.json'
 
 #when@prod:
 #    webpack_encore:
