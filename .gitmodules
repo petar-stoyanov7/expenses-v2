@@ -1,3 +1,0 @@
-[submodule "public/react"]
-	path = public/react
-	url = git@github.com:petar-stoyanov7/expenses-react.git
