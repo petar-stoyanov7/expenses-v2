@@ -24,9 +24,6 @@ function App() {
         }
     }, [ctx.userDetails.isLogged]);
 
-
-
-
     return (
 
         <Fragment>
