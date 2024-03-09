@@ -1,0 +1,3 @@
+[submodule "assets/js"]
+	path = assets/js
+	url = git@github.com:petar-stoyanov7/expenses-react.git
