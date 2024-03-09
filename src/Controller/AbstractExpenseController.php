@@ -29,34 +29,16 @@ abstract class AbstractExpenseController extends AbstractController
 
     protected function parseResponse(array $data) : JsonResponse
     {
-        if (empty($data)) {
-            return $this->json($data, 400);
-        }
-        $success = false;
-        $message = 'Error with execution';
-        $responseCode = empty($data['success'])  ? 400 : 200;
-
-        if (!empty($data['success'])) {
-            $success = $data['success'];
-        }
-
-        if (!empty($data['message'])) {
-            $message = $data['message'];
-        }
-
         $response = [
-            'success' => $success,
-            'message' => $message
+            'success' => false,
+            'message' => "Error with execution"
         ];
 
-        if (!empty($data['data'])) {
-            $response['data'] = $data['data'];
+        if (empty($data) || !isset($data['success']) || empty($data['message'])) {
+            return $this->json($response, 400);
         }
 
-        return $this->json(
-            $response,
-            $responseCode
-        );
+        return $this->json($data);
 
     }
     protected function parseDbResponse(array $data) : JsonResponse

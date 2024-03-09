@@ -33,7 +33,7 @@ class UserHelper
         $this->entityManager = $entityManager;
     }
 
-    public function getUser($param) : array
+    public function getUser($param, $hidePassword = true) : array
     {
         $response = [
             'success' => false,
@@ -45,15 +45,22 @@ class UserHelper
 
         if (is_numeric($param)) {
             $user = $this->userRepository->getById($param);
+        } elseif (filter_var($param, FILTER_VALIDATE_EMAIL)) {
+            $user = $this->userRepository->getByEmail($param);
         } else {
             $user = $this->userRepository->getByUsername($param);
         }
+
+
         if (empty($user)) {
             $response['message'] = "User does not exist";
             return $response;
         }
         $user = $user[0];
-        unset($user['password']);
+
+        if ($hidePassword) {
+            unset($user['password']);
+        }
 
         return [
             'success'   => true,
@@ -62,9 +69,9 @@ class UserHelper
         ];
     }
 
-    public function getUserDetails($param) : array
+    public function getUserDetails($param, $hidePassword = true) : array
     {
-        $userData = $this->getUser($param);
+        $userData = $this->getUser($param, $hidePassword);
         if (!$userData['success']) {
             return $userData;
         }
@@ -310,21 +317,20 @@ class UserHelper
         $username = $userData['username'];
         $password = $userData['password'];
 
-        if (filter_var($username, FILTER_VALIDATE_EMAIL)) {
-            $user = $this->userRepository->findByEmail($username);
-        } else {
-            $user = $this->userRepository->findByUsername($username);
-        }
-
-        if (empty($user)) {
+        $user = $this->getUserDetails($username, false);
+        if (!$user['success']) {
             $response['message'] = "User does not exist";
             return $response;
         }
 
-        if (password_verify($password, $user->getPassword())) {
+        $user = $user['data'];
+
+        if (password_verify($password, $user['password'])) {
+            unset($user['password']);
             return [
-                'success' => true,
-                'message' => "User login successful"
+                'success'   => true,
+                'message'   => "User login successful",
+                'user'      => $user
             ];
         }
 
