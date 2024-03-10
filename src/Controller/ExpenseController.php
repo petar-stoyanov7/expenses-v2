@@ -59,12 +59,23 @@ class ExpenseController extends AbstractExpenseController
     }
 
     /**
-     * @Route("/get/{carId}", requirements={"carId"="\d+"}, methods={"POST", "GET"})
+     * @Route("/get/car/{carId}", requirements={"carId"="\d+"}, methods={"POST", "GET"})
      */
     public function getExpense($carId, Request $request) : JsonResponse
     {
         $data = $this->getRequestData($request);
         $response = $this->expenseHelper->checkGetExpense($carId, $data);
+
+        return $this->parseResponse($response);
+    }
+
+    /**
+     * @Route("/get/user/{userId}", requirements={"userId"="\d+"}, methods={"POST", "GET"})
+     */
+    public function getUserExpense($userId, Request $request) : JsonResponse
+    {
+        $data = $this->getRequestData($request);
+        $response = $this->expenseHelper->checkGetUserExpenses($userId, $data);
 
         return $this->parseResponse($response);
     }

@@ -154,7 +154,33 @@ class ExpenseHelper
 
         return [
             'success'   => true,
-            'message'   => !empty($expenses) ? "Data retrieved successfully" : "No expenses with this parameters",
+            'message'   => !empty($expenses) ? "Data retrieved successfully" : "No expenses with these parameters",
+            'data'      => $expenses
+        ];
+    }
+
+    public function checkGetUserExpenses(int $userId, $parameters = []) : array
+    {
+        $response = [
+            'success' => false,
+            'message' => "Missing user"
+        ];
+        if (empty($userId)) {
+            return $response;
+        }
+
+        $user = $this->carRepository->find($userId);
+        if (empty($user)) {
+            $response['message'] = "No such user exists";
+            return $response;
+        }
+
+        $parameters['user'] = $userId;
+        $expenses = $this->expenseRepository->getExpenses($parameters);
+
+        return [
+            'success'   => true,
+            'message'   => !empty($expenses) ? "Data retrieved successfully" : "No expenses with these parameters",
             'data'      => $expenses
         ];
     }

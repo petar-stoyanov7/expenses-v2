@@ -108,12 +108,54 @@ class ExpenseRepository extends ServiceEntityRepository
                 ->setParameter('to', $parameters['to']);
             unset($parameters['to']);
         }
+        if (isset($parameters['user'])) {
+            $query->andWhere('c.user = :user')
+                ->setParameter('user', $parameters['user']);
+            unset($parameters['user']);
+        }
 
         if (!empty($parameters)) {
             foreach ($parameters as $index => $value) {
+                if (in_array($index, ['order', 'orderBy', 'count', 'hash'])) {
+                    continue;
+                }
                 $query->andWhere("e.{$index} = :{$index}");
                 $query->setParameter($index, $value);
             }
+        }
+
+        if (isset($parameters['orderBy'])) {
+            $oder = 'ASC';
+            switch($parameters['orderBy']) {
+                case 'DATE':
+                case 'date':
+                    $orderBy = 'e.createdAt';
+                    break;
+                case 'UPDATED':
+                case 'updated':
+                case 'UPDATE':
+                case 'update':
+                default:
+                    $orderBy = 'e.updatedAt';
+                    break;
+            }
+            if (isset($parameters['order'])) {
+                switch($parameters['order']) {
+                    case 'DESC':
+                    case 'desc':
+                        $oder = 'DESC';
+                        break;
+                    case 'ASC':
+                    case 'asc':
+                    default:
+                        $oder = 'ASC';
+                        break;
+                }
+            }
+            $query->orderBy($orderBy, $oder);
+        }
+        if (isset($parameters['count'])) {
+            $query->setMaxResults($parameters['count']);
         }
 
         return $query

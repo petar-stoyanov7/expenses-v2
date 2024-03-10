@@ -91,7 +91,7 @@ class UserController extends AbstractExpenseController
      */
     public function get($param) : JsonResponse
     {
-        $response = $this->userHelper->getUser($param);
+        $response = $this->userHelper->getUserDetails($param);
 
         return $this->parseResponse($response);
     }
