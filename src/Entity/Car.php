@@ -73,7 +73,7 @@ class Car
     private $schedules;
 
     /**
-     * @ORM\Column(type="boolean", options={default: 1})
+     * @ORM\Column(type="boolean", options={"default": 1})
      */
     private $isActive;
 
