@@ -80,6 +80,9 @@ class CarHelper
         if (!empty($carData['notes'])) {
             $car->setNotes($carData['notes']);
         }
+        if (!empty($carData['isActive'])) {
+            $car->setIsActive($carData['isActive']);
+        }
 
         if (!$this->_checkFuelValidity($carData['fuel'])) {
             $response['message'] = "Invalid fuel type(s)";
@@ -197,6 +200,10 @@ class CarHelper
         }
         if (!empty($carData['notes']) && $carData['notes'] !== $car->getNotes()) {
             $car->setNotes($carData['notes']);
+            $isChanged = true;
+        }
+        if (!empty($carData['isActive']) && $carData['isActive'] !== $car->getIsActive()) {
+            $car->setIsActive($carData['isActive']);
             $isChanged = true;
         }
 
