@@ -61,6 +61,7 @@ class CarHelper
         //TODO: add check for duplicate car for user
 
         $mileage = !empty($carData['mileage']) ? (int)$carData['mileage'] : 0;
+        $isActive = !empty($carData['isActive']) ? $carData['isActive'] : true;
 
         $car = new Car();
         $user = $this->userRepository->find($carData['userId']);
@@ -73,6 +74,7 @@ class CarHelper
         $car->setModel($carData['model']);
         $car->setColor($carData['color']);
         $car->setMileage($mileage);
+        $car->setIsActive($isActive);
 
         if (!empty($carData['year'])) {
             $car->setYear($carData['year']);

@@ -8,10 +8,12 @@ use App\Repository\CarRepository;
 use App\Repository\ExpenseRepository;
 use App\Repository\ExpenseTypeRepository;
 use App\Repository\FuelTypeRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class ExpenseHelper
 {
+    private userRepository $userRepository;
     private ExpenseRepository $expenseRepository;
     private ExpenseTypeRepository $expenseTypeRepository;
     private FuelTypeRepository $fuelTypeRepository;
@@ -20,6 +22,7 @@ class ExpenseHelper
     private EntityManagerInterface $entityManager;
 
     public function __construct(
+        UserRepository         $userRepository,
         ExpenseRepository      $expenseRepository,
         ExpenseTypeRepository  $expenseTypeRepository,
         FuelTypeRepository     $fuelTypeRepository,
@@ -28,6 +31,7 @@ class ExpenseHelper
         EntityManagerInterface $entityManager
     )
     {
+        $this->userRepository = $userRepository;
         $this->expenseRepository = $expenseRepository;
         $this->expenseTypeRepository = $expenseTypeRepository;
         $this->fuelTypeRepository = $fuelTypeRepository;
@@ -169,7 +173,7 @@ class ExpenseHelper
             return $response;
         }
 
-        $user = $this->carRepository->find($userId);
+        $user = $this->userRepository->find($userId);
         if (empty($user)) {
             $response['message'] = "No such user exists";
             return $response;
@@ -195,7 +199,7 @@ class ExpenseHelper
         if (
             empty($data) ||
             empty($data['carId']) ||
-            empty($data['expenseId']) ||
+            empty($data['expenseId']) && $data['expenseId'] !== 0 || // expenseId = 0 is "Others"
             empty($data['value'])
         ) {
             return $response;
