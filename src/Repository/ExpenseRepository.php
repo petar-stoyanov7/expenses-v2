@@ -119,6 +119,19 @@ class ExpenseRepository extends ServiceEntityRepository
                 if (in_array($index, ['order', 'orderBy', 'count', 'hash'])) {
                     continue;
                 }
+
+                if ("expenses" === $index) {
+                    $query->andWhere("et.id IN (:expenses)");
+                    $query->setParameter("expenses", $value);
+                    continue;
+                }
+                if ("fuels" === $index) {
+                    $value[] = null;
+                    $query->andWhere("e.fuelType IS NULL OR e.fuelType IN (:fuels)");
+                    $query->setParameter("fuels", $value);
+                    continue;
+                }
+
                 $query->andWhere("e.{$index} = :{$index}");
                 $query->setParameter($index, $value);
             }
