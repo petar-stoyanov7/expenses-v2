@@ -9,7 +9,9 @@ use App\Repository\ExpenseRepository;
 use App\Repository\ExpenseTypeRepository;
 use App\Repository\FuelTypeRepository;
 use App\Repository\UserRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
+use Exception;
 
 class ExpenseHelper
 {
@@ -207,6 +209,10 @@ class ExpenseHelper
         $response['value'] = $data['value'];
         $response['notes'] = empty($data['notes']) ? null : $data['notes'];
 
+        if (!empty($data['date'])) {
+            $response['date'] = $data['date'];
+        }
+
         $car = $this->carRepository->find($data['carId']);
         if (empty($car)) {
             $response['message'] = "No such car exists";
@@ -287,6 +293,9 @@ class ExpenseHelper
         }
         if (!empty($data['liters'])) {
             $expense->setLiters($data['liters']);
+        }
+        if (!empty($data['date']) && DateTime::createFromFormat('Y-m-d', $data['date']) !== false) {
+            $expense->setUpdatedAt(new DateTime($data['date']));
         }
 
         return $expense;
