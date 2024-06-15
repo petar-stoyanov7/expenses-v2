@@ -31,8 +31,8 @@ class FuelController extends AbstractExpenseController
      */
     public function new(Request $request): JsonResponse
     {
-        $query = $request->request->all();
-        $response = $this->fuelTypeHelper->checkCreateFuelType($query);
+        $data = $this->getRequestData($request);
+        $response = $this->fuelTypeHelper->checkCreateFuelType($data);
 
         return $this->parseResponse($response);
     }
