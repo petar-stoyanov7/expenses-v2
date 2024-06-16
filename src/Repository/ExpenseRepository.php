@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Expense;
+use DateTime;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\Query\Expr\Join;
@@ -98,14 +99,14 @@ class ExpenseRepository extends ServiceEntityRepository
                 'e.car = c.id'
             );
 
-        if (isset($parameters['from'])) {
-            $query->andWhere('e.createdAt > :from')
-                ->setParameter('from', $parameters['from']);
+        if (isset($parameters['from']) && DateTime::createFromFormat('Y-m-d', $parameters['from']) !== false) {
+            $query->andWhere('e.updatedAt > :from')
+                ->setParameter('from', new DateTime($parameters['from']));
             unset($parameters['from']);
         }
-        if (isset($parameters['to'])) {
-            $query->andWhere('e.createdAt < :to')
-                ->setParameter('to', $parameters['to']);
+        if (isset($parameters['to']) && DateTime::createFromFormat('Y-m-d', $parameters['to']) !== false) {
+            $query->andWhere('e.updatedAt < :to')
+                ->setParameter('to', new DateTime($parameters['to']));
             unset($parameters['to']);
         }
         if (isset($parameters['user'])) {
