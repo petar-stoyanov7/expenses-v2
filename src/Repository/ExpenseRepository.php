@@ -100,12 +100,12 @@ class ExpenseRepository extends ServiceEntityRepository
             );
 
         if (isset($parameters['from']) && DateTime::createFromFormat('Y-m-d', $parameters['from']) !== false) {
-            $query->andWhere('e.updatedAt > :from')
+            $query->andWhere('e.updatedAt >= :from')
                 ->setParameter('from', new DateTime($parameters['from']));
             unset($parameters['from']);
         }
         if (isset($parameters['to']) && DateTime::createFromFormat('Y-m-d', $parameters['to']) !== false) {
-            $query->andWhere('e.updatedAt < :to')
+            $query->andWhere('e.updatedAt <= :to')
                 ->setParameter('to', new DateTime($parameters['to']));
             unset($parameters['to']);
         }
