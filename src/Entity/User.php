@@ -50,6 +50,11 @@ class User
     private $lastName = "";
 
     /**
+     * @ORM\Column(type="string", length=60)
+     */
+    private $currency = "";
+
+    /**
      * @ORM\Column(type="text")
      */
     private $notes = "";
@@ -169,5 +174,21 @@ class User
         }
 
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getCurrency(): string
+    {
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     */
+    public function setCurrency(string $currency): void
+    {
+        $this->currency = $currency;
     }
 }
