@@ -148,7 +148,8 @@ class UserHelper
         if (
             empty($data['username']) ||
             empty($data['password']) ||
-            empty($data['email'])
+            empty($data['email']) ||
+            empty($data['currency'])
         ) {
             return $response;
         }
@@ -174,6 +175,7 @@ class UserHelper
         $user->setUsername($data['username']);
         $user->setPassword(password_hash($data['password'], PASSWORD_DEFAULT));
         $user->setEmail($data['email']);
+        $user->setCurrency($data['currency']);
 
         if (!empty($data['firstName'])) {
             $user->setFirstName($data['firstName']);
@@ -184,16 +186,26 @@ class UserHelper
         if (!empty($data['notes'])) {
             $user->setNotes($data['notes']);
         }
+        if (!empty($data['gender'])) {
+            $user->setGender($data['gender']);
+        }
 
         $this->userRepository->add($user, true);
         $userId = $user->getId();
+        $user = $this->userRepository->getById($userId);
+        $success = false;
+        $data = [];
+        if (count($user) > 0) {
+            $success = true;
+            $data = $user[0];
+            unset($data['password']);
+        }
 
-        $success = !empty($userId);
 
         return [
             'success'   => $success,
             'message'   => $success ? "User successfully created user" : "Error creating user",
-            'data'      => ['userId' => $userId]
+            'data'      => $data
         ];
     }
 

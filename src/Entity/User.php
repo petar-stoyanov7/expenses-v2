@@ -40,6 +40,11 @@ class User
     private $email;
 
     /**
+     * @ORM\Column(type="string", length=10)
+     */
+    private $gender;
+
+    /**
      * @ORM\Column(type="string", length=120)
      */
     private $firstName = "";
@@ -190,5 +195,21 @@ class User
     public function setCurrency(string $currency): void
     {
         $this->currency = $currency;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getGender()
+    {
+        return $this->gender;
+    }
+
+    /**
+     * @param mixed $gender
+     */
+    public function setGender($gender): void
+    {
+        $this->gender = $gender;
     }
 }
