@@ -191,14 +191,12 @@ class UserHelper
         }
 
         $this->userRepository->add($user, true);
-        $userId = $user->getId();
-        $user = $this->userRepository->getById($userId);
+        $userData = $this->getUserDetails($user->getId());
         $success = false;
         $data = [];
-        if (count($user) > 0) {
+        if ($userData['success']) {
             $success = true;
-            $data = $user[0];
-            unset($data['password']);
+            $data = $userData['data'];
         }
 
 
@@ -279,11 +277,24 @@ class UserHelper
         $isChanged = false;
 
         if (!empty($userData['username']) && $user->getUsername() !== $userData['username']) {
+            $existing = $this->userRepository->findByUsername($userData['username']);
+            if (!empty($existing) && $existing->getId() !== $user->getId()) {
+                $response['message'] = "User with this username already exists";
+                return $response;
+            }
             $user->setUsername($userData['username']);
             $isChanged = true;
         }
-        $loginResponse = $this->login($userData);
-        if (!empty($userData['password']) && !$loginResponse['success']) {
+        if (!empty($userData['email']) && $user->getEmail() !== $userData['email']) {
+            $existing = $this->userRepository->findByEmail($userData['email']);
+            if (!empty($existing) && $existing->getId() !== $user->getId()) {
+                $response['message'] = "User with this email already exists";
+                return $response;
+            }
+            $user->setEmail($userData['email']);
+            $isChanged = true;
+        }
+        if (!empty($userData['password'])) {
             $user->setPassword(password_hash($userData['password'], PASSWORD_DEFAULT));
             $isChanged = true;
         }
@@ -295,8 +306,12 @@ class UserHelper
             $user->setLastName($userData['lastName']);
             $isChanged = true;
         }
-        if (!empty($userData['email']) && $user->getEmail() !== $userData['email']) {
-            $user->setEmail($userData['email']);
+        if (!empty($userData['currency']) && $user->getEmail() !== $userData['currency']) {
+            $user->setCurrency($userData['currency']);
+            $isChanged = true;
+        }
+        if (!empty($userData['gender']) && $user->getEmail() !== $userData['gender']) {
+            $user->setGender($userData['gender']);
             $isChanged = true;
         }
         if (!empty($userData['notes']) && $user->getNotes() !== $userData['notes']) {
@@ -307,8 +322,9 @@ class UserHelper
         if ($isChanged) {
             $this->userRepository->edit($user, true);
             return [
-                'success' => true,
-                'message' => $user->getUsername() . " has been successfully modified",
+                'success'   => true,
+                'message'   => $user->getUsername() . " has been successfully modified",
+                'data'      => $this->getUserDetails($param, true)['data']
             ];
         }
 
