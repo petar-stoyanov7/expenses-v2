@@ -243,7 +243,7 @@ class CarHelper
             if (!empty($currentFuelIds)) {
                 $isChanged = true;
                 foreach ($currentFuelIds as $fuelId) {
-                    $carFuel = $this->carFuelsRepository->getByCarIdAndFuelId($car->getId(), $fuelId);
+                    $carFuel = $this->carFuelsRepository->findByCarIdAndFuelId($car->getId(), $fuelId);
                     $this->carFuelsRepository->remove($carFuel, true);
                 }
             }
