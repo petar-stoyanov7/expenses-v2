@@ -191,6 +191,91 @@ class ExpenseHelper
         ];
     }
 
+    public function checkImport(
+        int $userId,
+        int $carId,
+        ?string $data,
+        ?string $rowsSeparator = PHP_EOL,
+        ?string $separator = ':'
+    ): array
+    {
+        $response = [
+            'success'   => false,
+            'message'   => "Invalid import"
+        ];
+        $dataArray = explode($rowsSeparator, $data);
+
+        $user = $this->userRepository->find($userId);
+        if (empty($user)) {
+            $response['message'] = "No user found";
+            return $response;
+        }
+
+        foreach ($dataArray as $i => $row) {
+            $entry = explode($separator, $row);
+            if (!is_array($entry)) {
+                return $response;
+            }
+            $expenseData = [
+                'mileage'   => $entry[0],
+                'value'     => $entry[3],
+                'notes'     => $entry[4],
+                'carId'       => $carId,
+                'date'      => $entry[5]
+            ];
+
+            switch(strtolower($entry[1])) {
+                case 'бенз':
+                case 'бензин':
+                    $expenseType = 1;
+                    $fuelType = 0;
+                    $liters = $entry[2];
+                    break;
+                case 'газ':
+                    $expenseType = 1;
+                    $fuelType = 3;
+                    $liters = $entry[2];
+                    break;
+                case 'каско':
+                case 'го':
+                    $expenseType = 2;
+                    break;
+                case 'ремонт':
+                    $expenseType = 3;
+                    break;
+                case 'данък':
+                    $expenseType = 5;
+                    break;
+                case 'глоба':
+                    $expenseType = 6;
+                    break;
+                default:
+                    $expenseType = 0;
+                    $fuelType = null;
+                    $liters = null;
+                    break;
+            }
+            $expenseData['expenseId'] = $expenseType;
+
+            if (!empty($fuelType) && !empty($liters)) {
+                $expenseData['fuelType'] = $fuelType;
+                $expenseData['liters'] = $liters;
+            }
+
+            $response = $this->_checkExpenseData($expenseData);
+            if (!$response['success']) {
+                return $response;
+            }
+
+            $expense = $this->_setExpenseData(new Expense(), $response);
+            $this->expenseRepository->add($expense);
+        }
+
+        $this->entityManager->flush();
+
+        return $response;
+    }
+
     private function _checkExpenseData($data): array
     {
         $response = [

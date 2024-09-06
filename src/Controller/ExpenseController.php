@@ -79,4 +79,15 @@ class ExpenseController extends AbstractExpenseController
 
         return $this->parseResponse($response);
     }
+
+    /**
+     * @Route("/import/{userId}/{carId}", requirements={"userId"="\d+", "carId"="\d+"}, methods={"POST"})
+     */
+    public function importExpenses($userId, $carId, Request $request) : JsonResponse
+    {
+        $fileData = $this->getRequestData($request);
+        $response = $this->expenseHelper->checkImport($userId, $carId, $fileData);
+
+        return $this->parseResponse($response);
+    }
 }

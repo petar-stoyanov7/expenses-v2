@@ -3,20 +3,36 @@
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Exception;
 
 abstract class AbstractExpenseController extends AbstractController
 {
-    protected function getRequestData(Request $request) : array
+    protected function getRequestData(Request $request)
     {
-        if ('json' === $request->getContentType()) {
+        $contentType = $request->getContentType();
+
+        if ('json' === $contentType) {
             $data = $request->getContent();
             if (empty($data)) {
                 return [];
             }
 
-            return json_decode($data, true);
+            try {
+                $result = json_decode($data, true);
+            } catch (Exception $e) {
+                $result = [];
+            }
+            return $result;
+        } elseif ('form' === $contentType && !empty($_FILES)) {
+            $file = $request->files->all();
+            /** @var UploadedFile $file */
+            if (empty($file['file'])) {
+                return [];
+            }
+            return $file['file']->getContent();
         }
 
         $data = $request->request->all();
