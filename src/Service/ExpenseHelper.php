@@ -210,18 +210,29 @@ class ExpenseHelper
             $response['message'] = "No user found";
             return $response;
         }
+        $hasErrors = false;
+        $failedImports = [];
 
-        foreach ($dataArray as $i => $row) {
+        foreach ($dataArray as $row) {
             $entry = explode($separator, $row);
-            if (!is_array($entry)) {
-                return $response;
+            if (!is_array($entry) || count($entry) < 6) {
+                $hasErrors = true;
+                $failedImports[] = $row;
+                continue;
             }
+
+            /* The API expects date to be shown as Y-m-d, but in the export files it's stored as Ymd */
+            $date = $entry[5];
+            if (!empty($date) && preg_match('/\d{8}/', $date)) {
+                $date = DateTime::createFromFormat('Ymd', $date)->format('Y-m-d');
+            }
+
             $expenseData = [
                 'mileage'   => $entry[0],
                 'value'     => $entry[3],
                 'notes'     => $entry[4],
-                'carId'       => $carId,
-                'date'      => $entry[5]
+                'carId'     => $carId,
+                'date'      => $date
             ];
 
             switch(strtolower($entry[1])) {
@@ -264,7 +275,8 @@ class ExpenseHelper
 
             $response = $this->_checkExpenseData($expenseData);
             if (!$response['success']) {
-                return $response;
+                $hasErrors = true;
+                $failedImports[] = $row;
             }
 
             $expense = $this->_setExpenseData(new Expense(), $response);
@@ -272,6 +284,16 @@ class ExpenseHelper
         }
 
         $this->entityManager->flush();
+
+        $response = [
+            'success' => true,
+            'message' => 'Import completed successfully'
+        ];
+
+        if ($hasErrors) {
+            $response['message'] = "There were errors during import";
+            $response['data'] = json_encode($failedImports);
+        }
 
         return $response;
     }
