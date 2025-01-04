@@ -214,7 +214,12 @@ class ExpenseHelper
         $failedImports = [];
 
         foreach ($dataArray as $row) {
+            $row = preg_replace('/[\r\n]+/', '', $row); //sometimes the csv export contains extra newlines
+            $fuelType = $liters = null;
             $entry = explode($separator, $row);
+            if (empty($entry)) {
+                continue; //empty row
+            }
             if (!is_array($entry) || count($entry) < 6) {
                 $hasErrors = true;
                 $failedImports[] = $row;
@@ -235,41 +240,60 @@ class ExpenseHelper
                 'date'      => $date
             ];
 
-            switch(strtolower($entry[1])) {
+            switch(mb_strtolower($entry[1])) {
+                case 'gas':
+                case 'gasoline':
                 case 'бенз':
                 case 'бензин':
                     $expenseType = 1;
-                    $fuelType = 0;
+                    $fuelType = 1;
                     $liters = $entry[2];
                     break;
+                case 'diesel':
+                case 'дизел':
+                    $expenseType = 1;
+                    $fuelType = 2;
+                    $liters = $entry[2];
+                    break;
+                case 'lpg':
                 case 'газ':
                     $expenseType = 1;
                     $fuelType = 3;
                     $liters = $entry[2];
                     break;
+                case 'застраховка':
+                case 'zastrahovka':
+                case 'insurance':
                 case 'каско':
+                case 'kasko':
                 case 'го':
+                case 'go':
                     $expenseType = 2;
                     break;
                 case 'ремонт':
+                case 'remont':
+                case 'maint':
+                case 'maintenance':
                     $expenseType = 3;
                     break;
                 case 'данък':
+                case 'danak':
+                case 'tax':
                     $expenseType = 5;
                     break;
                 case 'глоба':
+                case 'globa':
+                case 'fine':
                     $expenseType = 6;
                     break;
                 default:
                     $expenseType = 0;
-                    $fuelType = null;
-                    $liters = null;
                     break;
             }
             $expenseData['expenseId'] = $expenseType;
 
-            if (!empty($fuelType) && !empty($liters)) {
-                $expenseData['fuelType'] = $fuelType;
+            if (!is_null($fuelType) && !is_null($liters)) {
+                $expenseData['fuelId'] = $fuelType;
                 $expenseData['liters'] = $liters;
             }
 
@@ -277,6 +301,7 @@ class ExpenseHelper
             if (!$response['success']) {
                 $hasErrors = true;
                 $failedImports[] = $row;
+                continue;
             }
 
             $expense = $this->_setExpenseData(new Expense(), $response);
@@ -379,6 +404,7 @@ class ExpenseHelper
         $response['mileage'] = $mileage;
 
         $response['success'] = true;
+        $response['message'] = "No errors found with expense";
         return $response;
     }
 
