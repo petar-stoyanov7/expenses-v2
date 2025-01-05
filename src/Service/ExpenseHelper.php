@@ -394,9 +394,7 @@ class ExpenseHelper
 
         $mileage = empty($data['mileage']) ? 0 : $data['mileage'];
         $carMileage = $car->getMileage();
-        if ($mileage < $carMileage) {
-            $mileage = $carMileage;
-        } elseif ($mileage > $carMileage) {
+        if ($mileage > $carMileage) {
             $car->setMileage($mileage);
             $this->carRepository->edit($car, true);
             $response['car'] = $car;
