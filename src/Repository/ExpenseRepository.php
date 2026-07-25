@@ -74,7 +74,7 @@ class ExpenseRepository extends ServiceEntityRepository
                 'e.mileage',
                 "CASE WHEN (et.displayName IS NOT NULL) THEN et.displayName ELSE et.name END AS expense",
                 "CASE WHEN (ft.displayName IS NOT NULL) THEN ft.displayName ELSE ft.name END AS fuel",
-                'e.liters',
+                'e.quantity',
                 'e.value',
                 'e.notes',
                 'e.createdAt',

@@ -47,7 +47,7 @@ class Expense
     /**
      * @ORM\Column(type="integer", nullable=true)
      */
-    private $liters;
+    private $quantity;
 
     /**
      * @ORM\Column(type="integer")
@@ -112,14 +112,14 @@ class Expense
         return $this;
     }
 
-    public function getLiters(): ?int
+    public function getQuantity(): ?int
     {
-        return $this->liters;
+        return $this->quantity;
     }
 
-    public function setLiters(?int $liters): self
+    public function setQuantity(?int $quantity): self
     {
-        $this->liters = $liters;
+        $this->quantity = $quantity;
 
         return $this;
     }

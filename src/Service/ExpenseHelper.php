@@ -215,7 +215,7 @@ class ExpenseHelper
 
         foreach ($dataArray as $row) {
             $row = preg_replace('/[\r\n]+/', '', $row); //sometimes the csv export contains extra newlines
-            $fuelType = $liters = null;
+            $fuelType = $quantity = null;
             $entry = explode($separator, $row);
             if (empty($entry)) {
                 continue; //empty row
@@ -247,19 +247,19 @@ class ExpenseHelper
                 case 'бензин':
                     $expenseType = 1;
                     $fuelType = 1;
-                    $liters = $entry[2];
+                    $quantity = $entry[2];
                     break;
                 case 'diesel':
                 case 'дизел':
                     $expenseType = 1;
                     $fuelType = 2;
-                    $liters = $entry[2];
+                    $quantity = $entry[2];
                     break;
                 case 'lpg':
                 case 'газ':
                     $expenseType = 1;
                     $fuelType = 3;
-                    $liters = $entry[2];
+                    $quantity = $entry[2];
                     break;
                 case 'застраховка':
                 case 'zastrahovka':
@@ -292,9 +292,9 @@ class ExpenseHelper
             }
             $expenseData['expenseId'] = $expenseType;
 
-            if (!is_null($fuelType) && !is_null($liters)) {
+            if (!is_null($fuelType) && !is_null($quantity)) {
                 $expenseData['fuelId'] = $fuelType;
-                $expenseData['liters'] = $liters;
+                $expenseData['quantity'] = $quantity;
             }
 
             $response = $this->_checkExpenseData($expenseData);
@@ -363,9 +363,9 @@ class ExpenseHelper
         if (
             1 === $data['expenseId'] &&
             (
-                empty($data['liters']) ||
+                empty($data['quantity']) ||
                 empty($data['fuelId']) ||
-                !is_numeric($data['liters']) ||
+                !is_numeric($data['quantity']) ||
                 !is_numeric($data['fuelId'])
             )
         ) {
@@ -388,7 +388,7 @@ class ExpenseHelper
                 return $response;
             }
 
-            $response['liters'] = $data['liters'];
+            $response['quantity'] = $data['quantity'];
             $response['fuelType'] = $fuelType;
         }
 
@@ -417,13 +417,13 @@ class ExpenseHelper
         $expense->setNotes($data['notes']);
 
         if (empty($data['fuelType'])) {
-            $expense->setLiters(null);
+            $expense->setQuantity(null);
             $expense->setFuelType(null);
         } else {
             $expense->setFuelType($data['fuelType']);
         }
-        if (!empty($data['liters'])) {
-            $expense->setLiters($data['liters']);
+        if (!empty($data['quantity'])) {
+            $expense->setQuantity($data['quantity']);
         }
         if (!empty($data['date']) && DateTime::createFromFormat('Y-m-d', $data['date']) !== false) {
             $expense->setUpdatedAt(new DateTime($data['date']));
