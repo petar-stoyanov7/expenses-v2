@@ -14,7 +14,8 @@
         "react-router-dom": "^5.3.0",
         "react-scripts": "4.0.3",
         "sass-loader": "^14.1.1",
-        "web-vitals": "^1.1.2"
+        "web-vitals": "^1.1.2",
+        "dotenv-flow": "^4.1.0"
     },
     "devDependencies": {
         "@babel/core": "^7.17.0",
