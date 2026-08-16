@@ -71,6 +71,12 @@ Encore
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
     .enableReactPreset()
+    .configureWatchOptions((watchOptions) => {
+        watchOptions.poll = 250;
+    })
+    .configureDevServerOptions((options) => {
+        options.allowedHosts = 'all';
+    })
     .configureDefinePlugin((options) => {
         options['process.env'] = {
             SERVER_URL: JSON.stringify(process.env.SERVER_URL),
