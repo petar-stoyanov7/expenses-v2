@@ -69,6 +69,8 @@ class ExpenseRepository extends ServiceEntityRepository
         $query = $this->createQueryBuilder('e')
             ->select([
                 'e.id',
+                'et.id as expenseId',
+                'ft.id as fuelTypeId',
                 'c.id as carId',
                 "CONCAT(c.brand,' ',c.model) as car",
                 'e.mileage',
